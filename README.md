@@ -1,6 +1,6 @@
 # MotorPH Employee Portal
 
-An employee portal for MotorPH made by **Group 3**. This project took **one and a half months** to accomplish. 
+An employee portal for MotorPH made by **Group 2**. This project took **one and a half months** to accomplish. 
 
 ## How do I obtain the program for checking?
 
