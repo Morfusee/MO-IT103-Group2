@@ -10,8 +10,11 @@ import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.google.gson.annotations.SerializedName;
+
 public class User {
 
+	@SerializedName("employeeNum")
 	private String employeeNumber;
 	private String userId;
 	private String password;

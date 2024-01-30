@@ -4,7 +4,6 @@ import java.io.IOException;
 
 public class Compensation extends EmployeeInformation {
 	
-	private String employeeNumber = getEmployeeNumber();
 	private String compensationMonth;
 	private double basicSalary;
 	private double riceSubsidy;

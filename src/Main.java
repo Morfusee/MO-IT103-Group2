@@ -1,6 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
 import javax.swing.border.EmptyBorder;
+
+import GUI.FullEmployeeDetailsPage;
 import GUI.LoginPage;
 
 public class Main {
@@ -9,7 +11,7 @@ public class Main {
 //        SwingUtilities.invokeLater(() -> new LoginPage());
     	java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new LoginPage().setVisible(true);
+                new FullEmployeeDetailsPage().setVisible(true);
             }
         });
     }

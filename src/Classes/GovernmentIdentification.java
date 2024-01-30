@@ -2,12 +2,20 @@ package Classes;
 
 import java.io.IOException;
 
+import com.google.gson.annotations.SerializedName;
+
 public class GovernmentIdentification extends EmployeeInformation {
 	
-	private String employeeNumber = getEmployeeNumber();
+	@SerializedName("SSS")
 	private String sssNumber;
+	
+	@SerializedName("Philhealth")
 	private String philHealthNumber;
+	
+	@SerializedName("Pag-ibig")
 	private String pagibigNumber;
+	
+	@SerializedName("TIN")
 	private String tinNumber;
 	
 
