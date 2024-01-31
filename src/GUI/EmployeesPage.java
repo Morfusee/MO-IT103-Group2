@@ -8,6 +8,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.annotations.SerializedName;
 
+import Classes.Compensation;
 import Classes.EmployeeInformation;
 import Classes.GovernmentIdentification;
 import UtilityClasses.JsonFileHandler;
@@ -26,6 +27,11 @@ public class EmployeesPage extends JFrame {
 
 	JScrollPane jScrollPane1;
 	JButton jButton1;
+	JTable jTable1;
+
+	// Instantiate two of the user's important information
+	GovernmentIdentification employeeGI;
+	Compensation employeeComp;
 
 	public EmployeesPage() {
 		initComponents();
@@ -33,14 +39,14 @@ public class EmployeesPage extends JFrame {
 	}
 
 	private void initComponents() {
-		
+
 		// Set JFrame
 		setTitle("MotorPH Payroll System | Employee List");
 		setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 		setResizable(false);
 
 		// Instantiate Table
-		JTable jTable1 = new JTable();
+		jTable1 = new JTable();
 
 		// Instantiate Button Component
 		jButton1 = new JButton();
@@ -164,8 +170,15 @@ public class EmployeesPage extends JFrame {
 			button.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					// Handle button click event
-					JOptionPane.showMessageDialog(null, "Button Clicked!");
+					java.awt.EventQueue.invokeLater(new Runnable() {
+						public void run() {
+							// Remove the EmployeesPage Window
+							dispose();
+
+							// Go back to the dashboard page
+							new FullEmployeeDetailsPage(employeeGI, employeeComp).setVisible(true);
+						}
+					});
 				}
 			});
 		}
@@ -173,6 +186,19 @@ public class EmployeesPage extends JFrame {
 		@Override
 		public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row,
 				int column) {
+
+			// Call constructor
+			employeeGI = new GovernmentIdentification(jTable1.getValueAt(row, column - 7).toString());
+			employeeComp = new Compensation(jTable1.getValueAt(row, column - 7).toString());
+
+			// Set all the important information to be passed
+			try {
+				setEmployeeInformationObject(jTable1.getValueAt(row, column - 7).toString());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
 			return button;
 		}
 
@@ -205,5 +231,41 @@ public class EmployeesPage extends JFrame {
 
 			return c;
 		}
+	}
+
+	public void setEmployeeInformationObject(String employeeNumber) throws IOException {
+
+		// Iterate through the JSON file for the employee data
+		JsonObject employeeData = JsonFileHandler.nameIterator(JsonFileHandler.getEmployeesJSON(), "employeeNum",
+				employeeNumber);
+
+		// Instantiate Gson to get their Json counterparts
+		Gson gson = new Gson();
+		GovernmentIdentification employeeGovInfo = gson.fromJson(employeeData, GovernmentIdentification.class);
+		Compensation employeeCompInfo = gson.fromJson(employeeData, Compensation.class);
+
+		// Set the employee's identity information
+		employeeGI.setLastName(employeeGovInfo.getLastName());
+		employeeGI.setFirstName(employeeGovInfo.getFirstName());
+		employeeGI.setBirthday(employeeGovInfo.getBirthday());
+		employeeGI.setAddress(employeeGovInfo.getAddress());
+		employeeGI.setPhoneNumber(employeeGovInfo.getPhoneNumber());
+		employeeGI.setImmediateSupervisor(employeeGovInfo.getImmediateSupervisor());
+		employeeGI.setStatus(employeeGovInfo.getStatus());
+		employeeGI.setPosition(employeeGovInfo.getPosition());
+
+		// Set Government Identification data of Employee
+		employeeGI.setSSSNumber(employeeGovInfo.getSSSNumber());
+		employeeGI.setPhilHealthNumber(employeeGovInfo.getPhilHealthNumber());
+		employeeGI.setPagibigNumber(employeeGovInfo.getPagibigNumber());
+		employeeGI.setTinNumber(employeeGovInfo.getTinNumber());
+
+		// Set Compensation data of Employee
+		employeeComp.setBasicSalary(employeeCompInfo.getBasicSalary());
+		employeeComp.setClothingAllowance(employeeCompInfo.getClothingAllowance());
+		employeeComp.setGrossSemiMonthlyRate(employeeCompInfo.getGrossSemiMonthlyRate());
+		employeeComp.setPhoneAllowance(employeeCompInfo.getPhoneAllowance());
+		employeeComp.setRiceSubsidy(employeeCompInfo.getRiceSubsidy());
+		employeeComp.setHourlyRate(employeeCompInfo.getHourlyRate());
 	}
 }

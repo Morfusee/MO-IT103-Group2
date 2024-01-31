@@ -2,13 +2,25 @@ package Classes;
 
 import java.io.IOException;
 
+import com.google.gson.annotations.SerializedName;
+
 public class Compensation extends EmployeeInformation {
 	
 	private String compensationMonth;
+	
+	@SerializedName("basic_salary")
 	private double basicSalary;
+	
+	@SerializedName("rice_subsidy")
 	private double riceSubsidy;
+	
+	@SerializedName("phone_allowance")
 	private double phoneAllowance;
+	
+	@SerializedName("clothing_allowance")
 	private double clothingAllowance;
+	
+	@SerializedName("gross_semi-montly_rate")
 	private double grossSemiMonthlyRate;
 	private double netSalary;
 	

@@ -11,7 +11,7 @@ public class Main {
 //        SwingUtilities.invokeLater(() -> new LoginPage());
     	java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new FullEmployeeDetailsPage().setVisible(true);
+                new LoginPage().setVisible(true);
             }
         });
     }

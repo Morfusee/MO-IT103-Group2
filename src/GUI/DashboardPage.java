@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.border.*;
+
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import Classes.Compensation;
@@ -421,10 +423,8 @@ public class DashboardPage extends JFrame {
 			JsonObject employeeData = JsonFileHandler.nameIterator(JsonFileHandler.getEmployeesJSON(), "employeeNum",
 					employeeIdField.getText());
 
-			if (checkForEmployee(employeeData)) {
-				setLabelValues(employeeData);
-				computeButton.setEnabled(true);
-			}
+			// Iterate through the data and set labels
+			setLabelValues(employeeData);
 		} catch (IOException e1) {
 			// Handle IOException
 			e1.printStackTrace();
@@ -440,14 +440,8 @@ public class DashboardPage extends JFrame {
 			JsonObject employeeData = JsonFileHandler.nameIterator(JsonFileHandler.getEmployeesJSON(), "employeeNum",
 					employeeIdField.getText());
 
-			// Guard Clause to avoid proceeding
-			if (!checkForEmployee(employeeData)) {
-				return;
-			}
-
 			// Iterate through the data and set labels
 			setLabelValues(employeeData);
-			computeButton.setEnabled(true);
 		} catch (IOException e1) {
 			// Handle IOException
 			e1.printStackTrace();
@@ -490,13 +484,19 @@ public class DashboardPage extends JFrame {
 	}
 
 	public void setLabelValues(JsonObject employeeData) throws IOException {
-		// Reassign the values of the labels
-		for (int i = 0; i < labels.length; i++) {
-			labels[i].setText(employeeData.get(stringifiedLabels[i + 1]).getAsString());
+		// Check if user exists
+		if (!checkForEmployee(employeeData)) {
+			return;
 		}
+
+		// Reassign the values of the labels
+		JsonFileHandler.labelAssigner(employeeData, stringifiedLabels, labels);
 
 		// Set the employeeData to the employeeComp and employeeGI objects
 		setEmployeeInformationObject(employeeData);
+
+		// Let user click the compute button if user exists
+		computeButton.setEnabled(true);
 	}
 
 	public void openCalculator(Compensation employeeComp) {
@@ -510,21 +510,25 @@ public class DashboardPage extends JFrame {
 	}
 
 	public void setEmployeeInformationObject(JsonObject employeeData) {
+		
+		// Instantiate Gson to get their Json counterparts
+		Gson gson = new Gson();
+		GovernmentIdentification employeeGovInfo = gson.fromJson(employeeData, GovernmentIdentification.class);
+		Compensation employeeCompInfo = gson.fromJson(employeeData, Compensation.class);
 
 		// Set Government Identification data of Employee
-		employeeGI.setSSSNumber(employeeData.get("SSS").getAsString());
-		employeeGI.setPhilHealthNumber(employeeData.get("Philhealth").getAsString());
-		employeeGI.setPagibigNumber(employeeData.get("Pag-ibig").getAsString());
-		employeeGI.setTinNumber(employeeData.get("TIN").getAsString());
+		employeeGI.setSSSNumber(employeeGovInfo.getSSSNumber());
+		employeeGI.setPhilHealthNumber(employeeGovInfo.getPhilHealthNumber());
+		employeeGI.setPagibigNumber(employeeGovInfo.getPagibigNumber());
+		employeeGI.setTinNumber(employeeGovInfo.getTinNumber());
 
 		// Set Compensation data of Employee
-		employeeComp.setBasicSalary(employeeData.get("basic_salary").getAsDouble());
-		employeeComp.setClothingAllowance(employeeData.get("clothing_allowance").getAsDouble());
-		employeeComp.setGrossSemiMonthlyRate(employeeData.get("gross_semi-monthly_rate").getAsDouble());
-		employeeComp.setPhoneAllowance(employeeData.get("phone_allowance").getAsDouble());
-		employeeComp.setRiceSubsidy(employeeData.get("rice_subsidy").getAsDouble());
-		employeeComp.setHourlyRate(employeeData.get("hourly_rate").getAsDouble());
-
+		employeeComp.setBasicSalary(employeeCompInfo.getBasicSalary());
+		employeeComp.setClothingAllowance(employeeCompInfo.getClothingAllowance());
+		employeeComp.setGrossSemiMonthlyRate(employeeCompInfo.getGrossSemiMonthlyRate());
+		employeeComp.setPhoneAllowance(employeeCompInfo.getPhoneAllowance());
+		employeeComp.setRiceSubsidy(employeeCompInfo.getRiceSubsidy());
+		employeeComp.setHourlyRate(employeeCompInfo.getHourlyRate());
 	}
 
 }

@@ -1,13 +1,128 @@
 package GUI;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
+import java.io.IOException;
+import java.text.DecimalFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import javax.swing.JFrame;
+import javax.swing.JScrollBar;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
+import Classes.Compensation;
+import Classes.GovernmentIdentification;
+import UtilityClasses.JsonFileHandler;
+import UtilityClasses.SalaryCalculator;
 
 public class FullEmployeeDetailsPage extends JFrame {
 
-	/**
-	 * Creates new form NewJFrame
-	 */
-	public FullEmployeeDetailsPage() {
+	// Variables declaration - do not modify
+	private javax.swing.JLabel address;
+	private javax.swing.JLabel addressValue;
+	private javax.swing.JLabel allowancesLabel;
+	private javax.swing.JButton backToEmployeeListButton;
+	private javax.swing.JLabel birthday;
+	private javax.swing.JLabel birthdayValue;
+	private javax.swing.JLabel clothingAllowanceLabel;
+	private javax.swing.JLabel clothingAllowanceValue;
+	private javax.swing.JButton computeButton;
+	private javax.swing.JLabel firstName;
+	private javax.swing.JLabel firstNameValue;
+	private javax.swing.JLabel grossSalaryComputationLabel;
+	private javax.swing.JLabel grossSalaryLabel;
+	private javax.swing.JLabel grossSalaryLabel1;
+	private javax.swing.JLabel grossSalaryValue;
+	private javax.swing.JLabel grossSalaryValue1;
+	private javax.swing.JLabel hourlyRate;
+	private javax.swing.JLabel hourlyRateLabel;
+	private javax.swing.JLabel hourlyRateValue;
+	private javax.swing.JLabel hourlyRateLabel1;
+	private javax.swing.JLabel hoursRenderedLabel;
+	private javax.swing.JLabel hoursRenderedValue;
+	private javax.swing.JLabel immediateSupervisor;
+	private javax.swing.JLabel immediateSupervisorValue;
+	private javax.swing.JPanel jPanel1;
+	private javax.swing.JPanel jPanel11;
+	private javax.swing.JPanel jPanel12;
+	private javax.swing.JPanel jPanel3;
+	private javax.swing.JPanel jPanel31;
+	private javax.swing.JPanel jPanel32;
+	private javax.swing.JPanel jPanel33;
+	private javax.swing.JPanel jPanel4;
+	private javax.swing.JPanel jPanel5;
+	private javax.swing.JScrollPane jScrollPane1;
+	private javax.swing.JLabel lastName;
+	private javax.swing.JLabel lastNameValue;
+	private javax.swing.JComboBox<String> monthDropdown;
+	private javax.swing.JLabel netSalaryComputationLabel;
+	private javax.swing.JLabel netSalaryLabel;
+	private javax.swing.JLabel netSalaryValue;
+	private javax.swing.JLabel pagibigDeductionsLabel;
+	private javax.swing.JLabel pagibigDeductionsValue;
+	private javax.swing.JLabel pagibigNumber;
+	private javax.swing.JLabel pagibigNumberValue;
+	private javax.swing.JLabel philhealthDeductionsLabel;
+	private javax.swing.JLabel philhealthDeductionsValue;
+	private javax.swing.JLabel philhealthNumber;
+	private javax.swing.JLabel philhealthNumberValue;
+	private javax.swing.JLabel phoneAllowanceLabel;
+	private javax.swing.JLabel phoneAllowanceValue;
+	private javax.swing.JLabel phoneNumber;
+	private javax.swing.JLabel phoneNumberValue;
+	private javax.swing.JLabel position;
+	private javax.swing.JLabel positionValue;
+	private javax.swing.JLabel riceSubsidyLabel;
+	private javax.swing.JLabel riceSubsidyValue;
+	private javax.swing.JLabel salaryAfterTaxLabel;
+	private javax.swing.JLabel salaryAfterTaxValue;
+	private javax.swing.JLabel sssDeductionsLabel;
+	private javax.swing.JLabel sssDeductionsValue;
+	private javax.swing.JLabel sssNumber;
+	private javax.swing.JLabel sssNumberValue;
+	private javax.swing.JLabel status;
+	private javax.swing.JLabel statusValue;
+	private javax.swing.JLabel taxableSalaryLabel;
+	private javax.swing.JLabel taxableSalaryValue;
+	private javax.swing.JLabel tinNumber;
+	private javax.swing.JLabel tinNumberValue;
+	private javax.swing.JLabel totalAllowanceLabel;
+	private javax.swing.JLabel totalAllowanceValue;
+	private javax.swing.JLabel totalAllowancesLabel1;
+	private javax.swing.JLabel totalAllowancesValue1;
+	private javax.swing.JLabel totalDeductionsLabel;
+	private javax.swing.JLabel totalDeductionsValue;
+	private javax.swing.JLabel withHoldingTaxLabel;
+	private javax.swing.JLabel withHoldingTaxValue;
+	private GovernmentIdentification employeeGI;
+	private Compensation employeeComp;
+	private Double totalAllowance;
+	private String selectedMonth = LocalDate.now().getMonth().toString();
+	private AtomicInteger hoursRenderedNum = new AtomicInteger(0);
+	private AtomicInteger absentsNum = new AtomicInteger(0);
+	private AtomicInteger latesNum = new AtomicInteger(0);
+	private AtomicInteger presentsNum = new AtomicInteger(0);
+	private DecimalFormat numberFormat = new DecimalFormat("#.00");
+	// End of variables declaration
+
+	public FullEmployeeDetailsPage(GovernmentIdentification employeeGI, Compensation employeeComp) {
+
+		// Put the class objects onto a higher scope
+		this.employeeGI = employeeGI;
+		this.employeeComp = employeeComp;
+
+		// Set total allowance early on to avoid errors
+		this.totalAllowance = employeeComp.getRiceSubsidy() + employeeComp.getPhoneAllowance()
+				+ employeeComp.getClothingAllowance();
+
 		initComponents();
 	}
 
@@ -27,12 +142,12 @@ public class FullEmployeeDetailsPage extends JFrame {
 		address = new javax.swing.JLabel();
 		addressValue = new javax.swing.JLabel();
 		jPanel31 = new javax.swing.JPanel();
-		hoursRenderedLabel17 = new javax.swing.JLabel();
-		grossSalaryComputationLabel17 = new javax.swing.JLabel();
-		hourlyRateLabel17 = new javax.swing.JLabel();
-		grossSalaryLabel17 = new javax.swing.JLabel();
-		hourlyRateValue18 = new javax.swing.JLabel();
-		grossSalaryValue17 = new javax.swing.JLabel();
+		hoursRenderedLabel = new javax.swing.JLabel();
+		grossSalaryComputationLabel = new javax.swing.JLabel();
+		hourlyRateLabel = new javax.swing.JLabel();
+		grossSalaryLabel = new javax.swing.JLabel();
+		hourlyRateLabel1 = new javax.swing.JLabel();
+		grossSalaryValue = new javax.swing.JLabel();
 		hoursRenderedValue = new javax.swing.JLabel();
 		jPanel32 = new javax.swing.JPanel();
 		netSalaryComputationLabel = new javax.swing.JLabel();
@@ -44,8 +159,8 @@ public class FullEmployeeDetailsPage extends JFrame {
 		totalDeductionsValue = new javax.swing.JLabel();
 		pagibigDeductionsLabel = new javax.swing.JLabel();
 		pagibigDeductionsValue = new javax.swing.JLabel();
-		grossSalaryLabel18 = new javax.swing.JLabel();
-		grossSalaryValue18 = new javax.swing.JLabel();
+		grossSalaryLabel1 = new javax.swing.JLabel();
+		grossSalaryValue1 = new javax.swing.JLabel();
 		taxableSalaryLabel = new javax.swing.JLabel();
 		taxableSalaryValue = new javax.swing.JLabel();
 		withHoldingTaxLabel = new javax.swing.JLabel();
@@ -67,14 +182,14 @@ public class FullEmployeeDetailsPage extends JFrame {
 		clothingAllowanceLabel = new javax.swing.JLabel();
 		clothingAllowanceValue = new javax.swing.JLabel();
 		jPanel11 = new javax.swing.JPanel();
-		firstName6 = new javax.swing.JLabel();
-		firstNameValue6 = new javax.swing.JLabel();
-		lastName6 = new javax.swing.JLabel();
-		lastNameValue6 = new javax.swing.JLabel();
-		birthday6 = new javax.swing.JLabel();
-		birthdayValue6 = new javax.swing.JLabel();
-		phoneNumber6 = new javax.swing.JLabel();
-		phoneNumberValue6 = new javax.swing.JLabel();
+		firstName = new javax.swing.JLabel();
+		firstNameValue = new javax.swing.JLabel();
+		lastName = new javax.swing.JLabel();
+		lastNameValue = new javax.swing.JLabel();
+		birthday = new javax.swing.JLabel();
+		birthdayValue = new javax.swing.JLabel();
+		phoneNumber = new javax.swing.JLabel();
+		phoneNumberValue = new javax.swing.JLabel();
 		jPanel3 = new javax.swing.JPanel();
 		status = new javax.swing.JLabel();
 		statusValue = new javax.swing.JLabel();
@@ -95,7 +210,9 @@ public class FullEmployeeDetailsPage extends JFrame {
 		tinNumberValue = new javax.swing.JLabel();
 		monthDropdown = new javax.swing.JComboBox<>();
 		computeButton = new javax.swing.JButton();
+		backToEmployeeListButton = new javax.swing.JButton();
 
+		setTitle("MotorPH Payroll System | Full Details of Employee");
 		setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 		setResizable(false);
 
@@ -108,7 +225,7 @@ public class FullEmployeeDetailsPage extends JFrame {
 		address.setText("Address");
 
 		addressValue.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-		addressValue.setText(" ");
+		addressValue.setText(employeeGI.getAddress());
 
 		javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
 		jPanel5.setLayout(jPanel5Layout);
@@ -127,23 +244,23 @@ public class FullEmployeeDetailsPage extends JFrame {
 		jPanel31.setBackground(new java.awt.Color(255, 255, 255));
 		jPanel31.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
 
-		hoursRenderedLabel17.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-		hoursRenderedLabel17.setText("Hours Rendered");
+		hoursRenderedLabel.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+		hoursRenderedLabel.setText("Hours Rendered");
 
-		grossSalaryComputationLabel17.setFont(new java.awt.Font("Arial", 1, 24)); // NOI18N
-		grossSalaryComputationLabel17.setText("Gross Salary Computation");
+		grossSalaryComputationLabel.setFont(new java.awt.Font("Arial", 1, 24)); // NOI18N
+		grossSalaryComputationLabel.setText("Gross Salary Computation");
 
-		hourlyRateLabel17.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-		hourlyRateLabel17.setText("Hourly Rate");
+		hourlyRateLabel.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+		hourlyRateLabel.setText("Hourly Rate");
 
-		grossSalaryLabel17.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
-		grossSalaryLabel17.setText("Gross Salary");
+		grossSalaryLabel.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+		grossSalaryLabel.setText("Gross Salary");
 
-		hourlyRateValue18.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-		hourlyRateValue18.setText(" ");
+		hourlyRateLabel1.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+		hourlyRateLabel1.setText(Double.toString(employeeComp.getHourlyRate()));
 
-		grossSalaryValue17.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
-		grossSalaryValue17.setText(" ");
+		grossSalaryValue.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+		grossSalaryValue.setText(" ");
 
 		hoursRenderedValue.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
 		hoursRenderedValue.setText(" ");
@@ -153,32 +270,32 @@ public class FullEmployeeDetailsPage extends JFrame {
 		jPanel31Layout.setHorizontalGroup(jPanel31Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 				.addGroup(jPanel31Layout.createSequentialGroup().addGap(42, 42, 42)
 						.addGroup(jPanel31Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-								.addComponent(hourlyRateLabel17).addComponent(hoursRenderedLabel17)
-								.addComponent(grossSalaryLabel17))
+								.addComponent(hourlyRateLabel).addComponent(hoursRenderedLabel)
+								.addComponent(grossSalaryLabel))
 						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED,
 								javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 						.addGroup(jPanel31Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-								.addComponent(hourlyRateValue18, javax.swing.GroupLayout.PREFERRED_SIZE, 132,
+								.addComponent(hourlyRateLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 132,
 										javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addComponent(grossSalaryValue17, javax.swing.GroupLayout.PREFERRED_SIZE, 132,
+								.addComponent(grossSalaryValue, javax.swing.GroupLayout.PREFERRED_SIZE, 132,
 										javax.swing.GroupLayout.PREFERRED_SIZE)
 								.addComponent(hoursRenderedValue, javax.swing.GroupLayout.PREFERRED_SIZE, 132,
 										javax.swing.GroupLayout.PREFERRED_SIZE))
 						.addGap(45, 45, 45))
 				.addGroup(jPanel31Layout.createSequentialGroup().addGap(14, 14, 14)
-						.addComponent(grossSalaryComputationLabel17).addGap(0, 0, Short.MAX_VALUE)));
+						.addComponent(grossSalaryComputationLabel).addGap(0, 0, Short.MAX_VALUE)));
 		jPanel31Layout
 				.setVerticalGroup(jPanel31Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 						.addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel31Layout.createSequentialGroup()
-								.addGap(14, 14, 14).addComponent(grossSalaryComputationLabel17).addGap(28, 28, 28)
+								.addGap(14, 14, 14).addComponent(grossSalaryComputationLabel).addGap(28, 28, 28)
 								.addGroup(jPanel31Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-										.addComponent(hoursRenderedLabel17).addComponent(hoursRenderedValue))
+										.addComponent(hoursRenderedLabel).addComponent(hoursRenderedValue))
 								.addGap(18, 18, 18)
 								.addGroup(jPanel31Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-										.addComponent(hourlyRateLabel17).addComponent(hourlyRateValue18))
+										.addComponent(hourlyRateLabel).addComponent(hourlyRateLabel1))
 								.addGap(18, 18, 18)
 								.addGroup(jPanel31Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-										.addComponent(grossSalaryLabel17).addComponent(grossSalaryValue17))
+										.addComponent(grossSalaryLabel).addComponent(grossSalaryValue))
 								.addContainerGap(35, Short.MAX_VALUE)));
 
 		jPanel32.setBackground(new java.awt.Color(255, 255, 255));
@@ -211,11 +328,11 @@ public class FullEmployeeDetailsPage extends JFrame {
 		pagibigDeductionsValue.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
 		pagibigDeductionsValue.setText(" ");
 
-		grossSalaryLabel18.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-		grossSalaryLabel18.setText("Gross Salary");
+		grossSalaryLabel1.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+		grossSalaryLabel1.setText("Gross Salary");
 
-		grossSalaryValue18.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-		grossSalaryValue18.setText(" ");
+		grossSalaryValue1.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+		grossSalaryValue1.setText(" ");
 
 		taxableSalaryLabel.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
 		taxableSalaryLabel.setText("Taxable Salary");
@@ -239,7 +356,7 @@ public class FullEmployeeDetailsPage extends JFrame {
 		totalAllowancesLabel1.setText("Total Allowances");
 
 		totalAllowancesValue1.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-		totalAllowancesValue1.setText(" ");
+		totalAllowancesValue1.setText(numberFormat.format(totalAllowance));
 
 		netSalaryLabel.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
 		netSalaryLabel.setText("Net Salary");
@@ -256,7 +373,7 @@ public class FullEmployeeDetailsPage extends JFrame {
 				.addGroup(jPanel32Layout.createSequentialGroup().addGap(48, 48, 48)
 						.addGroup(jPanel32Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 								.addComponent(philhealthDeductionsLabel).addComponent(sssDeductionsLabel)
-								.addComponent(totalDeductionsLabel).addComponent(grossSalaryLabel18)
+								.addComponent(totalDeductionsLabel).addComponent(grossSalaryLabel1)
 								.addComponent(taxableSalaryLabel).addComponent(withHoldingTaxLabel)
 								.addComponent(salaryAfterTaxLabel).addComponent(netSalaryLabel)
 								.addComponent(totalAllowancesLabel1).addComponent(pagibigDeductionsLabel))
@@ -272,7 +389,7 @@ public class FullEmployeeDetailsPage extends JFrame {
 										javax.swing.GroupLayout.PREFERRED_SIZE)
 								.addComponent(taxableSalaryValue, javax.swing.GroupLayout.PREFERRED_SIZE, 132,
 										javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addComponent(grossSalaryValue18, javax.swing.GroupLayout.PREFERRED_SIZE, 132,
+								.addComponent(grossSalaryValue1, javax.swing.GroupLayout.PREFERRED_SIZE, 132,
 										javax.swing.GroupLayout.PREFERRED_SIZE)
 								.addComponent(totalDeductionsValue, javax.swing.GroupLayout.PREFERRED_SIZE, 132,
 										javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -300,7 +417,7 @@ public class FullEmployeeDetailsPage extends JFrame {
 								.addComponent(totalDeductionsLabel).addComponent(totalDeductionsValue))
 						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
 						.addGroup(jPanel32Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-								.addComponent(grossSalaryLabel18).addComponent(grossSalaryValue18))
+								.addComponent(grossSalaryLabel1).addComponent(grossSalaryValue1))
 						.addGap(18, 18, 18)
 						.addGroup(jPanel32Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
 								.addComponent(taxableSalaryLabel).addComponent(taxableSalaryValue))
@@ -325,19 +442,19 @@ public class FullEmployeeDetailsPage extends JFrame {
 		riceSubsidyLabel.setText("Rice Subsidy");
 
 		riceSubsidyValue.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-		riceSubsidyValue.setText(" ");
+		riceSubsidyValue.setText(Double.toString(employeeComp.getRiceSubsidy()));
 
 		phoneAllowanceLabel.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
 		phoneAllowanceLabel.setText("Phone Allowance");
 
 		phoneAllowanceValue.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-		phoneAllowanceValue.setText(" ");
+		phoneAllowanceValue.setText(Double.toString(employeeComp.getPhoneAllowance()));
 
 		totalAllowanceLabel.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
 		totalAllowanceLabel.setText("Total Allowances");
 
 		totalAllowanceValue.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
-		totalAllowanceValue.setText(" ");
+		totalAllowanceValue.setText(numberFormat.format(totalAllowance));
 
 		allowancesLabel.setFont(new java.awt.Font("Arial", 1, 24)); // NOI18N
 		allowancesLabel.setText("Allowances");
@@ -346,7 +463,7 @@ public class FullEmployeeDetailsPage extends JFrame {
 		clothingAllowanceLabel.setText("Clothing Allowance");
 
 		clothingAllowanceValue.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-		clothingAllowanceValue.setText(" ");
+		clothingAllowanceValue.setText(Double.toString(employeeComp.getClothingAllowance()));
 
 		javax.swing.GroupLayout jPanel33Layout = new javax.swing.GroupLayout(jPanel33);
 		jPanel33.setLayout(jPanel33Layout);
@@ -388,58 +505,59 @@ public class FullEmployeeDetailsPage extends JFrame {
 		jPanel11.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
 		jPanel11.setPreferredSize(new java.awt.Dimension(280, 299));
 
-		firstName6.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
-		firstName6.setText("First Name");
+		firstName.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+		firstName.setText("First Name");
 
-		firstNameValue6.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-		firstNameValue6.setText(" ");
+		firstNameValue.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+		firstNameValue.setText(employeeGI.getFirstName());
 
-		lastName6.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
-		lastName6.setText("Last Name");
+		lastName.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+		lastName.setText("Last Name");
 
-		lastNameValue6.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-		lastNameValue6.setText(" ");
+		lastNameValue.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+		lastNameValue.setText(employeeGI.getLastName());
 
-		birthday6.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
-		birthday6.setText("Birthday");
+		birthday.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+		birthday.setText("Birthday");
 
-		birthdayValue6.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-		birthdayValue6.setText(" ");
+		birthdayValue.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+		birthdayValue.setText(employeeGI.getBirthday());
 
-		phoneNumber6.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
-		phoneNumber6.setText("Phone Number");
+		phoneNumber.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+		phoneNumber.setText("Phone Number");
 
-		phoneNumberValue6.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-		phoneNumberValue6.setText(" ");
+		phoneNumberValue.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+		phoneNumberValue.setText(employeeGI.getPhoneNumber());
 
 		javax.swing.GroupLayout jPanel11Layout = new javax.swing.GroupLayout(jPanel11);
 		jPanel11.setLayout(jPanel11Layout);
 		jPanel11Layout.setHorizontalGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(jPanel11Layout.createSequentialGroup().addGap(17, 17, 17).addGroup(jPanel11Layout
-						.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-						.addComponent(phoneNumber6).addComponent(birthday6).addComponent(lastName6)
-						.addComponent(firstName6)
-						.addComponent(firstNameValue6, javax.swing.GroupLayout.DEFAULT_SIZE, 201, Short.MAX_VALUE)
-						.addComponent(lastNameValue6, javax.swing.GroupLayout.DEFAULT_SIZE,
-								javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addComponent(birthdayValue6, javax.swing.GroupLayout.DEFAULT_SIZE,
-								javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addComponent(phoneNumberValue6, javax.swing.GroupLayout.DEFAULT_SIZE,
-								javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-						.addContainerGap(73, Short.MAX_VALUE)));
+				.addGroup(jPanel11Layout.createSequentialGroup().addGap(28, 28, 28).addGroup(jPanel11Layout
+						.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+						.addComponent(phoneNumberValue, javax.swing.GroupLayout.PREFERRED_SIZE, 201,
+								javax.swing.GroupLayout.PREFERRED_SIZE)
+						.addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+								.addComponent(phoneNumber).addComponent(birthday).addComponent(lastName)
+								.addComponent(firstName)
+								.addComponent(firstNameValue, javax.swing.GroupLayout.DEFAULT_SIZE, 201,
+										Short.MAX_VALUE)
+								.addComponent(lastNameValue, javax.swing.GroupLayout.DEFAULT_SIZE,
+										javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+								.addComponent(birthdayValue, javax.swing.GroupLayout.DEFAULT_SIZE,
+										javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+						.addContainerGap(62, Short.MAX_VALUE)));
 		jPanel11Layout.setVerticalGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(jPanel11Layout.createSequentialGroup().addGap(34, 34, 34).addComponent(firstName6)
+				.addGroup(jPanel11Layout.createSequentialGroup().addGap(28, 28, 28).addComponent(firstName)
 						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addComponent(firstNameValue6)
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED).addComponent(lastName6)
+						.addComponent(firstNameValue)
+						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED).addComponent(lastName)
+						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED).addComponent(lastNameValue)
+						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED).addComponent(birthday)
+						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED).addComponent(birthdayValue)
+						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED).addComponent(phoneNumber)
 						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addComponent(lastNameValue6)
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED).addComponent(birthday6)
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addComponent(birthdayValue6)
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-						.addComponent(phoneNumber6).addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addComponent(phoneNumberValue6).addContainerGap(23, Short.MAX_VALUE)));
+						.addComponent(phoneNumberValue)
+						.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
 
 		jPanel3.setBackground(new java.awt.Color(255, 255, 255));
 		jPanel3.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
@@ -449,25 +567,25 @@ public class FullEmployeeDetailsPage extends JFrame {
 		status.setText("Status");
 
 		statusValue.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-		statusValue.setText(" ");
+		statusValue.setText(employeeGI.getStatus());
 
 		position.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
 		position.setText("Position");
 
 		positionValue.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-		positionValue.setText(" ");
+		positionValue.setText(employeeGI.getPosition());
 
 		immediateSupervisor.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
 		immediateSupervisor.setText("Immediate Supervisor");
 
 		immediateSupervisorValue.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-		immediateSupervisorValue.setText(" ");
+		immediateSupervisorValue.setText(employeeGI.getImmediateSupervisor());
 
 		hourlyRate.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
 		hourlyRate.setText("Hourly Rate");
 
 		hourlyRateValue.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-		hourlyRateValue.setText(" ");
+		hourlyRateValue.setText(Double.toString(employeeComp.getHourlyRate()));
 
 		javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
 		jPanel3.setLayout(jPanel3Layout);
@@ -506,25 +624,25 @@ public class FullEmployeeDetailsPage extends JFrame {
 		sssNumber.setText("SSS Number");
 
 		sssNumberValue.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-		sssNumberValue.setText(" ");
+		sssNumberValue.setText(employeeGI.getSSSNumber());
 
 		philhealthNumber.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
 		philhealthNumber.setText("PhilHealth Number");
 
 		philhealthNumberValue.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-		philhealthNumberValue.setText(" ");
+		philhealthNumberValue.setText(employeeGI.getPhilHealthNumber());
 
 		pagibigNumber.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
 		pagibigNumber.setText("Pag-ibig Number");
 
 		pagibigNumberValue.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-		pagibigNumberValue.setText(" ");
+		pagibigNumberValue.setText(employeeGI.getPagibigNumber());
 
 		tinNumber.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
 		tinNumber.setText("TIN Number");
 
 		tinNumberValue.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-		tinNumberValue.setText(" ");
+		tinNumberValue.setText(employeeGI.getTinNumber());
 
 		javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
 		jPanel4.setLayout(jPanel4Layout);
@@ -563,28 +681,23 @@ public class FullEmployeeDetailsPage extends JFrame {
 						.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
 						.addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE,
 								javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addGroup(jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-								.addGroup(jPanel12Layout.createSequentialGroup()
-										.addComponent(jPanel11, javax.swing.GroupLayout.PREFERRED_SIZE, 297,
-												javax.swing.GroupLayout.PREFERRED_SIZE)
-										.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-										.addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 297,
-												javax.swing.GroupLayout.PREFERRED_SIZE)
-										.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-										.addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, 293,
-												Short.MAX_VALUE))
-								.addGroup(jPanel12Layout.createSequentialGroup()
-										.addGroup(jPanel12Layout
-												.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-												.addComponent(jPanel31, javax.swing.GroupLayout.DEFAULT_SIZE,
-														javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-												.addComponent(jPanel33, javax.swing.GroupLayout.PREFERRED_SIZE,
-														javax.swing.GroupLayout.DEFAULT_SIZE,
-														javax.swing.GroupLayout.PREFERRED_SIZE))
-										.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-										.addComponent(jPanel32, javax.swing.GroupLayout.PREFERRED_SIZE,
-												javax.swing.GroupLayout.DEFAULT_SIZE,
-												javax.swing.GroupLayout.PREFERRED_SIZE))))
+						.addGroup(jPanel12Layout.createSequentialGroup()
+								.addComponent(jPanel11, javax.swing.GroupLayout.PREFERRED_SIZE, 297,
+										javax.swing.GroupLayout.PREFERRED_SIZE)
+								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+								.addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 297,
+										javax.swing.GroupLayout.PREFERRED_SIZE)
+								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+								.addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, 293, Short.MAX_VALUE))
+						.addGroup(jPanel12Layout.createSequentialGroup().addGroup(jPanel12Layout
+								.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+								.addComponent(jPanel31, javax.swing.GroupLayout.DEFAULT_SIZE,
+										javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+								.addComponent(jPanel33, javax.swing.GroupLayout.PREFERRED_SIZE,
+										javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+								.addComponent(jPanel32, javax.swing.GroupLayout.PREFERRED_SIZE,
+										javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
 						.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
 		jPanel12Layout.setVerticalGroup(jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 				.addGroup(jPanel12Layout.createSequentialGroup().addContainerGap().addGroup(jPanel12Layout
@@ -610,13 +723,48 @@ public class FullEmployeeDetailsPage extends JFrame {
 
 		jScrollPane1.setViewportView(jPanel12);
 
+		// Get the vertical scrollbar from the JScrollPane
+		JScrollBar verticalScrollBar = jScrollPane1.getVerticalScrollBar();
+
+		// Reduce the unit increment for slower scrolling
+		int newUnitIncrement = 10;
+		verticalScrollBar.setUnitIncrement(newUnitIncrement);
+
+		// Add an AdjustmentListener to the vertical scrollbar
+		verticalScrollBar.addAdjustmentListener(new AdjustmentListener() {
+			@Override
+			public void adjustmentValueChanged(AdjustmentEvent e) {
+				// Adjust the block increment if needed
+				int newBlockIncrement = 50;
+				verticalScrollBar.setBlockIncrement(newBlockIncrement);
+			}
+		});
+
 		monthDropdown.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "January", "February", "March",
 				"April", "May", "June", "July", "August", "September", "October", "November", "December" }));
+
+		monthDropdown.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				monthDropdownActionPerformed(e);
+			}
+		});
 
 		computeButton.setText("Compute");
 		computeButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				computeButtonActionPerformed(evt);
+				try {
+					computeButtonActionPerformed(evt);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+
+		backToEmployeeListButton.setText("Go Back to Employee List");
+		backToEmployeeListButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				backToEmployeeListButtonActionPerformed(evt);
 			}
 		});
 
@@ -624,10 +772,14 @@ public class FullEmployeeDetailsPage extends JFrame {
 		jPanel1.setLayout(jPanel1Layout);
 		jPanel1Layout.setHorizontalGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 				.addGroup(jPanel1Layout.createSequentialGroup().addContainerGap(41, Short.MAX_VALUE)
-						.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+						.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
 								.addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 948,
 										javax.swing.GroupLayout.PREFERRED_SIZE)
 								.addGroup(jPanel1Layout.createSequentialGroup()
+										.addComponent(backToEmployeeListButton, javax.swing.GroupLayout.PREFERRED_SIZE,
+												206, javax.swing.GroupLayout.PREFERRED_SIZE)
+										.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+												javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 										.addComponent(monthDropdown, javax.swing.GroupLayout.PREFERRED_SIZE, 179,
 												javax.swing.GroupLayout.PREFERRED_SIZE)
 										.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -640,6 +792,8 @@ public class FullEmployeeDetailsPage extends JFrame {
 								.addComponent(computeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33,
 										javax.swing.GroupLayout.PREFERRED_SIZE)
 								.addComponent(monthDropdown, javax.swing.GroupLayout.PREFERRED_SIZE, 33,
+										javax.swing.GroupLayout.PREFERRED_SIZE)
+								.addComponent(backToEmployeeListButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33,
 										javax.swing.GroupLayout.PREFERRED_SIZE))
 						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
 						.addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 438,
@@ -654,304 +808,123 @@ public class FullEmployeeDetailsPage extends JFrame {
 				jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE));
 
 		pack();
+
+		// Must be called after setting pack
+		setLocationRelativeTo(null);
 	}// </editor-fold>
 
-	private void computeButtonActionPerformed(java.awt.event.ActionEvent evt) {
-		// TODO add your handling code here:
+	private void computeButtonActionPerformed(java.awt.event.ActionEvent evt) throws IOException {
+
+		// Reset values for hours rendered
+		resetSummaryValues();
+
+		// Compute for the hoursRendered
+		loadAttendanceRecordsFromJsonFile(JsonFileHandler.getAttendanceJsonPath());
+
+		// Compute for the Gross Salary
+		Double grossSalary = computeGrossSalary();
+
+		grossSalaryValue.setText(numberFormat.format(computeGrossSalary()));
+		grossSalaryValue1.setText(numberFormat.format(computeGrossSalary()));
+
+		// Compute for deductions
+		Double sssDeduction = SalaryCalculator.getSSS(grossSalary);
+		Double philhealthDeduction = SalaryCalculator.getPhilHealth(grossSalary);
+		Double pagibigDeduction = SalaryCalculator.getPagibig(grossSalary);
+		Double totalDeductions = sssDeduction + philhealthDeduction + pagibigDeduction;
+
+		sssDeductionsValue.setText(numberFormat.format(sssDeduction));
+		philhealthDeductionsValue.setText(numberFormat.format(philhealthDeduction));
+		pagibigDeductionsValue.setText(numberFormat.format(pagibigDeduction));
+		totalDeductionsValue.setText(numberFormat.format(totalDeductions));
+
+		// Compute for Taxable Salary
+		Double taxableSalary = grossSalary - totalDeductions;
+
+		taxableSalaryValue.setText(numberFormat.format(taxableSalary));
+
+		// Compute for Withholding Tax
+		Double withholdingTax = SalaryCalculator.getWithholding(taxableSalary);
+
+		withHoldingTaxValue.setText(numberFormat.format(withholdingTax));
+
+		// Compute for Salary After Tax
+		Double salaryAfterTax = taxableSalary - withholdingTax;
+
+		salaryAfterTaxValue.setText(numberFormat.format(salaryAfterTax));
+
+		// Compute for Net Salary
+		Double netSalary = salaryAfterTax + totalAllowance;
+
+		netSalaryValue.setText(numberFormat.format(netSalary));
+
 	}
 
-	// Variables declaration - do not modify
-	private javax.swing.JLabel address;
-	private javax.swing.JLabel addressValue;
-	private javax.swing.JLabel allowancesLabel;
-	private javax.swing.JLabel birthday;
-	private javax.swing.JLabel birthday1;
-	private javax.swing.JLabel birthday2;
-	private javax.swing.JLabel birthday3;
-	private javax.swing.JLabel birthday4;
-	private javax.swing.JLabel birthday5;
-	private javax.swing.JLabel birthday6;
-	private javax.swing.JLabel birthday7;
-	private javax.swing.JLabel birthdayValue;
-	private javax.swing.JLabel birthdayValue1;
-	private javax.swing.JLabel birthdayValue2;
-	private javax.swing.JLabel birthdayValue3;
-	private javax.swing.JLabel birthdayValue4;
-	private javax.swing.JLabel birthdayValue5;
-	private javax.swing.JLabel birthdayValue6;
-	private javax.swing.JLabel birthdayValue7;
-	private javax.swing.JButton calculateSalaryButton;
-	private javax.swing.JButton calculateSalaryButton1;
-	private javax.swing.JButton calculateSalaryButton10;
-	private javax.swing.JButton calculateSalaryButton11;
-	private javax.swing.JButton calculateSalaryButton12;
-	private javax.swing.JButton calculateSalaryButton13;
-	private javax.swing.JButton calculateSalaryButton14;
-	private javax.swing.JButton calculateSalaryButton15;
-	private javax.swing.JButton calculateSalaryButton16;
-	private javax.swing.JButton calculateSalaryButton2;
-	private javax.swing.JButton calculateSalaryButton3;
-	private javax.swing.JButton calculateSalaryButton4;
-	private javax.swing.JButton calculateSalaryButton5;
-	private javax.swing.JButton calculateSalaryButton6;
-	private javax.swing.JButton calculateSalaryButton7;
-	private javax.swing.JButton calculateSalaryButton8;
-	private javax.swing.JButton calculateSalaryButton9;
-	private javax.swing.JLabel clothingAllowanceLabel;
-	private javax.swing.JLabel clothingAllowanceValue;
-	private javax.swing.JButton computeButton;
-	private javax.swing.JLabel firstName;
-	private javax.swing.JLabel firstName1;
-	private javax.swing.JLabel firstName2;
-	private javax.swing.JLabel firstName3;
-	private javax.swing.JLabel firstName4;
-	private javax.swing.JLabel firstName5;
-	private javax.swing.JLabel firstName6;
-	private javax.swing.JLabel firstName7;
-	private javax.swing.JLabel firstNameValue;
-	private javax.swing.JLabel firstNameValue1;
-	private javax.swing.JLabel firstNameValue2;
-	private javax.swing.JLabel firstNameValue3;
-	private javax.swing.JLabel firstNameValue4;
-	private javax.swing.JLabel firstNameValue5;
-	private javax.swing.JLabel firstNameValue6;
-	private javax.swing.JLabel firstNameValue7;
-	private javax.swing.JLabel grossSalaryComputationLabel;
-	private javax.swing.JLabel grossSalaryComputationLabel1;
-	private javax.swing.JLabel grossSalaryComputationLabel10;
-	private javax.swing.JLabel grossSalaryComputationLabel11;
-	private javax.swing.JLabel grossSalaryComputationLabel12;
-	private javax.swing.JLabel grossSalaryComputationLabel13;
-	private javax.swing.JLabel grossSalaryComputationLabel14;
-	private javax.swing.JLabel grossSalaryComputationLabel15;
-	private javax.swing.JLabel grossSalaryComputationLabel16;
-	private javax.swing.JLabel grossSalaryComputationLabel17;
-	private javax.swing.JLabel grossSalaryComputationLabel2;
-	private javax.swing.JLabel grossSalaryComputationLabel3;
-	private javax.swing.JLabel grossSalaryComputationLabel4;
-	private javax.swing.JLabel grossSalaryComputationLabel5;
-	private javax.swing.JLabel grossSalaryComputationLabel6;
-	private javax.swing.JLabel grossSalaryComputationLabel7;
-	private javax.swing.JLabel grossSalaryComputationLabel8;
-	private javax.swing.JLabel grossSalaryComputationLabel9;
-	private javax.swing.JLabel grossSalaryLabel;
-	private javax.swing.JLabel grossSalaryLabel1;
-	private javax.swing.JLabel grossSalaryLabel10;
-	private javax.swing.JLabel grossSalaryLabel11;
-	private javax.swing.JLabel grossSalaryLabel12;
-	private javax.swing.JLabel grossSalaryLabel13;
-	private javax.swing.JLabel grossSalaryLabel14;
-	private javax.swing.JLabel grossSalaryLabel15;
-	private javax.swing.JLabel grossSalaryLabel16;
-	private javax.swing.JLabel grossSalaryLabel17;
-	private javax.swing.JLabel grossSalaryLabel18;
-	private javax.swing.JLabel grossSalaryLabel2;
-	private javax.swing.JLabel grossSalaryLabel3;
-	private javax.swing.JLabel grossSalaryLabel4;
-	private javax.swing.JLabel grossSalaryLabel5;
-	private javax.swing.JLabel grossSalaryLabel6;
-	private javax.swing.JLabel grossSalaryLabel7;
-	private javax.swing.JLabel grossSalaryLabel8;
-	private javax.swing.JLabel grossSalaryLabel9;
-	private javax.swing.JLabel grossSalaryValue;
-	private javax.swing.JLabel grossSalaryValue1;
-	private javax.swing.JLabel grossSalaryValue10;
-	private javax.swing.JLabel grossSalaryValue11;
-	private javax.swing.JLabel grossSalaryValue12;
-	private javax.swing.JLabel grossSalaryValue13;
-	private javax.swing.JLabel grossSalaryValue14;
-	private javax.swing.JLabel grossSalaryValue15;
-	private javax.swing.JLabel grossSalaryValue16;
-	private javax.swing.JLabel grossSalaryValue17;
-	private javax.swing.JLabel grossSalaryValue18;
-	private javax.swing.JLabel grossSalaryValue2;
-	private javax.swing.JLabel grossSalaryValue3;
-	private javax.swing.JLabel grossSalaryValue4;
-	private javax.swing.JLabel grossSalaryValue5;
-	private javax.swing.JLabel grossSalaryValue6;
-	private javax.swing.JLabel grossSalaryValue7;
-	private javax.swing.JLabel grossSalaryValue8;
-	private javax.swing.JLabel grossSalaryValue9;
-	private javax.swing.JLabel hourlyRate;
-	private javax.swing.JLabel hourlyRateLabel;
-	private javax.swing.JLabel hourlyRateLabel1;
-	private javax.swing.JLabel hourlyRateLabel10;
-	private javax.swing.JLabel hourlyRateLabel11;
-	private javax.swing.JLabel hourlyRateLabel12;
-	private javax.swing.JLabel hourlyRateLabel13;
-	private javax.swing.JLabel hourlyRateLabel14;
-	private javax.swing.JLabel hourlyRateLabel15;
-	private javax.swing.JLabel hourlyRateLabel16;
-	private javax.swing.JLabel hourlyRateLabel17;
-	private javax.swing.JLabel hourlyRateLabel2;
-	private javax.swing.JLabel hourlyRateLabel3;
-	private javax.swing.JLabel hourlyRateLabel4;
-	private javax.swing.JLabel hourlyRateLabel5;
-	private javax.swing.JLabel hourlyRateLabel6;
-	private javax.swing.JLabel hourlyRateLabel7;
-	private javax.swing.JLabel hourlyRateLabel8;
-	private javax.swing.JLabel hourlyRateLabel9;
-	private javax.swing.JLabel hourlyRateValue;
-	private javax.swing.JLabel hourlyRateValue1;
-	private javax.swing.JLabel hourlyRateValue10;
-	private javax.swing.JLabel hourlyRateValue11;
-	private javax.swing.JLabel hourlyRateValue12;
-	private javax.swing.JLabel hourlyRateValue13;
-	private javax.swing.JLabel hourlyRateValue14;
-	private javax.swing.JLabel hourlyRateValue15;
-	private javax.swing.JLabel hourlyRateValue16;
-	private javax.swing.JLabel hourlyRateValue17;
-	private javax.swing.JLabel hourlyRateValue18;
-	private javax.swing.JLabel hourlyRateValue2;
-	private javax.swing.JLabel hourlyRateValue3;
-	private javax.swing.JLabel hourlyRateValue4;
-	private javax.swing.JLabel hourlyRateValue5;
-	private javax.swing.JLabel hourlyRateValue6;
-	private javax.swing.JLabel hourlyRateValue7;
-	private javax.swing.JLabel hourlyRateValue8;
-	private javax.swing.JLabel hourlyRateValue9;
-	private javax.swing.JTextField hoursRenderedField;
-	private javax.swing.JTextField hoursRenderedField1;
-	private javax.swing.JTextField hoursRenderedField10;
-	private javax.swing.JTextField hoursRenderedField11;
-	private javax.swing.JTextField hoursRenderedField12;
-	private javax.swing.JTextField hoursRenderedField13;
-	private javax.swing.JTextField hoursRenderedField14;
-	private javax.swing.JTextField hoursRenderedField15;
-	private javax.swing.JTextField hoursRenderedField16;
-	private javax.swing.JTextField hoursRenderedField2;
-	private javax.swing.JTextField hoursRenderedField3;
-	private javax.swing.JTextField hoursRenderedField4;
-	private javax.swing.JTextField hoursRenderedField5;
-	private javax.swing.JTextField hoursRenderedField6;
-	private javax.swing.JTextField hoursRenderedField7;
-	private javax.swing.JTextField hoursRenderedField8;
-	private javax.swing.JTextField hoursRenderedField9;
-	private javax.swing.JLabel hoursRenderedLabel;
-	private javax.swing.JLabel hoursRenderedLabel1;
-	private javax.swing.JLabel hoursRenderedLabel10;
-	private javax.swing.JLabel hoursRenderedLabel11;
-	private javax.swing.JLabel hoursRenderedLabel12;
-	private javax.swing.JLabel hoursRenderedLabel13;
-	private javax.swing.JLabel hoursRenderedLabel14;
-	private javax.swing.JLabel hoursRenderedLabel15;
-	private javax.swing.JLabel hoursRenderedLabel16;
-	private javax.swing.JLabel hoursRenderedLabel17;
-	private javax.swing.JLabel hoursRenderedLabel2;
-	private javax.swing.JLabel hoursRenderedLabel3;
-	private javax.swing.JLabel hoursRenderedLabel4;
-	private javax.swing.JLabel hoursRenderedLabel5;
-	private javax.swing.JLabel hoursRenderedLabel6;
-	private javax.swing.JLabel hoursRenderedLabel7;
-	private javax.swing.JLabel hoursRenderedLabel8;
-	private javax.swing.JLabel hoursRenderedLabel9;
-	private javax.swing.JLabel hoursRenderedValue;
-	private javax.swing.JLabel immediateSupervisor;
-	private javax.swing.JLabel immediateSupervisorValue;
-	private javax.swing.JPanel jPanel1;
-	private javax.swing.JPanel jPanel10;
-	private javax.swing.JPanel jPanel11;
-	private javax.swing.JPanel jPanel12;
-	private javax.swing.JPanel jPanel13;
-	private javax.swing.JPanel jPanel14;
-	private javax.swing.JPanel jPanel15;
-	private javax.swing.JPanel jPanel16;
-	private javax.swing.JPanel jPanel17;
-	private javax.swing.JPanel jPanel18;
-	private javax.swing.JPanel jPanel19;
-	private javax.swing.JPanel jPanel2;
-	private javax.swing.JPanel jPanel20;
-	private javax.swing.JPanel jPanel21;
-	private javax.swing.JPanel jPanel22;
-	private javax.swing.JPanel jPanel23;
-	private javax.swing.JPanel jPanel24;
-	private javax.swing.JPanel jPanel25;
-	private javax.swing.JPanel jPanel26;
-	private javax.swing.JPanel jPanel27;
-	private javax.swing.JPanel jPanel28;
-	private javax.swing.JPanel jPanel29;
-	private javax.swing.JPanel jPanel3;
-	private javax.swing.JPanel jPanel30;
-	private javax.swing.JPanel jPanel31;
-	private javax.swing.JPanel jPanel32;
-	private javax.swing.JPanel jPanel33;
-	private javax.swing.JPanel jPanel4;
-	private javax.swing.JPanel jPanel5;
-	private javax.swing.JPanel jPanel6;
-	private javax.swing.JPanel jPanel7;
-	private javax.swing.JPanel jPanel8;
-	private javax.swing.JPanel jPanel9;
-	private javax.swing.JScrollPane jScrollPane1;
-	private javax.swing.JLabel lastName;
-	private javax.swing.JLabel lastName1;
-	private javax.swing.JLabel lastName2;
-	private javax.swing.JLabel lastName3;
-	private javax.swing.JLabel lastName4;
-	private javax.swing.JLabel lastName5;
-	private javax.swing.JLabel lastName6;
-	private javax.swing.JLabel lastName7;
-	private javax.swing.JLabel lastNameValue;
-	private javax.swing.JLabel lastNameValue1;
-	private javax.swing.JLabel lastNameValue2;
-	private javax.swing.JLabel lastNameValue3;
-	private javax.swing.JLabel lastNameValue4;
-	private javax.swing.JLabel lastNameValue5;
-	private javax.swing.JLabel lastNameValue6;
-	private javax.swing.JLabel lastNameValue7;
-	private javax.swing.JComboBox<String> monthDropdown;
-	private javax.swing.JLabel netSalaryComputationLabel;
-	private javax.swing.JLabel netSalaryLabel;
-	private javax.swing.JLabel netSalaryValue;
-	private javax.swing.JLabel pagibigDeductionsLabel;
-	private javax.swing.JLabel pagibigDeductionsValue;
-	private javax.swing.JLabel pagibigNumber;
-	private javax.swing.JLabel pagibigNumberValue;
-	private javax.swing.JLabel philhealthDeductionsLabel;
-	private javax.swing.JLabel philhealthDeductionsValue;
-	private javax.swing.JLabel philhealthNumber;
-	private javax.swing.JLabel philhealthNumberValue;
-	private javax.swing.JLabel phoneAllowanceLabel;
-	private javax.swing.JLabel phoneAllowanceValue;
-	private javax.swing.JLabel phoneNumber;
-	private javax.swing.JLabel phoneNumber1;
-	private javax.swing.JLabel phoneNumber2;
-	private javax.swing.JLabel phoneNumber3;
-	private javax.swing.JLabel phoneNumber4;
-	private javax.swing.JLabel phoneNumber5;
-	private javax.swing.JLabel phoneNumber6;
-	private javax.swing.JLabel phoneNumber7;
-	private javax.swing.JLabel phoneNumberValue;
-	private javax.swing.JLabel phoneNumberValue1;
-	private javax.swing.JLabel phoneNumberValue2;
-	private javax.swing.JLabel phoneNumberValue3;
-	private javax.swing.JLabel phoneNumberValue4;
-	private javax.swing.JLabel phoneNumberValue5;
-	private javax.swing.JLabel phoneNumberValue6;
-	private javax.swing.JLabel phoneNumberValue7;
-	private javax.swing.JLabel position;
-	private javax.swing.JLabel positionValue;
-	private javax.swing.JLabel riceSubsidyLabel;
-	private javax.swing.JLabel riceSubsidyValue;
-	private javax.swing.JLabel salaryAfterTaxLabel;
-	private javax.swing.JLabel salaryAfterTaxValue;
-	private javax.swing.JLabel sssDeductionsLabel;
-	private javax.swing.JLabel sssDeductionsValue;
-	private javax.swing.JLabel sssNumber;
-	private javax.swing.JLabel sssNumberValue;
-	private javax.swing.JLabel status;
-	private javax.swing.JLabel statusValue;
-	private javax.swing.JLabel taxableSalaryLabel;
-	private javax.swing.JLabel taxableSalaryValue;
-	private javax.swing.JLabel tinNumber;
-	private javax.swing.JLabel tinNumberValue;
-	private javax.swing.JLabel totalAllowanceLabel;
-	private javax.swing.JLabel totalAllowanceValue;
-	private javax.swing.JLabel totalAllowancesLabel1;
-	private javax.swing.JLabel totalAllowancesValue1;
-	private javax.swing.JLabel totalDeductionsLabel;
-	private javax.swing.JLabel totalDeductionsValue;
-	private javax.swing.JLabel withHoldingTaxLabel;
-	private javax.swing.JLabel withHoldingTaxValue;
-	// End of variables declaration
+	private void backToEmployeeListButtonActionPerformed(java.awt.event.ActionEvent evt) {
+		// Go back to the employee list page
+		java.awt.EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				// Remove the EmployeesPage Window
+				dispose();
 
+				// Go back to the dashboard page
+				new EmployeesPage().setVisible(true);
+			}
+		});
+	}
+
+	private void monthDropdownActionPerformed(java.awt.event.ActionEvent evt) {
+
+		// Reset values for hours rendered
+		resetSummaryValues();
+
+		// Get the selected item
+		selectedMonth = ((String) monthDropdown.getSelectedItem()).toUpperCase();
+	}
+
+	public void loadAttendanceRecordsFromJsonFile(String filePath) throws IOException {
+
+		// Load the JSON file as a JsonArray
+		JsonArray jsonArray = JsonFileHandler.getAttendanceJSON(filePath);
+
+		// Loop through each element in the array and create an AttendanceData object
+		// for each one
+		for (JsonElement element : jsonArray) {
+
+			JsonObject attendanceJson = element.getAsJsonObject();
+			String employeeNum = attendanceJson.get("employeeNum").getAsString();
+			LocalDateTime month = SalaryCalculator.getTimeInOrOut(attendanceJson, "time_in");
+
+			if (employeeNum.equals(employeeGI.getEmployeeNumber())
+					&& month.getMonth().equals(Month.valueOf(selectedMonth))) {
+
+				String date = attendanceJson.get("date").getAsString();
+				String timeIn = attendanceJson.get("time_in").getAsString();
+				String timeOut = attendanceJson.get("time_out").getAsString();
+				String hoursRendered = SalaryCalculator.getAttendance(attendanceJson, Month.valueOf(selectedMonth),
+						presentsNum, latesNum, absentsNum, hoursRenderedNum);
+				String present = isPresent(hoursRendered);
+			}
+		}
+
+		// Set the hours rendered to the label
+		hoursRenderedValue.setText(hoursRenderedNum.toString());
+	}
+
+	public Double computeGrossSalary() {
+		return hoursRenderedNum.get() * employeeComp.getHourlyRate();
+	}
+
+	public String isPresent(String hoursRendered) {
+		if (!hoursRendered.equals("0"))
+			return "Present";
+		return "Absent";
+	}
+
+	public void resetSummaryValues() {
+		this.absentsNum = new AtomicInteger(0);
+		this.hoursRenderedNum = new AtomicInteger(0);
+		this.latesNum = new AtomicInteger(0);
+		this.presentsNum = new AtomicInteger(0);
+	}
 }

@@ -124,7 +124,7 @@ public class LoginPage extends JFrame {
 			/* Create and display the form */
 			java.awt.EventQueue.invokeLater(new Runnable() {
 				public void run() {
-					new EmployeesPage().setVisible(true);
+					new DashboardPage().setVisible(true);
 				}
 			});
 		}
