@@ -20,8 +20,9 @@ public class Compensation extends EmployeeInformation {
 	@SerializedName("clothing_allowance")
 	private double clothingAllowance;
 	
-	@SerializedName("gross_semi-montly_rate")
+	@SerializedName("gross_semi-monthly_rate")
 	private double grossSemiMonthlyRate;
+	
 	private double netSalary;
 	
 

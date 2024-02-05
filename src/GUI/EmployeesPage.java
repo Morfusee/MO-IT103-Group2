@@ -25,9 +25,12 @@ import javax.swing.*;
 @SuppressWarnings("serial")
 public class EmployeesPage extends JFrame {
 
-	JScrollPane jScrollPane1;
-	JButton jButton1;
-	JTable jTable1;
+	private JScrollPane jScrollPane1;
+	private JButton jButton1;
+	private JTable jTable1;
+	private int numberOfColumns = 8;
+	private JButton addEmployeeButton;
+	private JButton deleteEmployeeButton;
 
 	// Instantiate two of the user's important information
 	GovernmentIdentification employeeGI;
@@ -48,6 +51,9 @@ public class EmployeesPage extends JFrame {
 		// Instantiate Table
 		jTable1 = new JTable();
 
+		addEmployeeButton = new JButton();
+		deleteEmployeeButton = new JButton();
+
 		// Instantiate Button Component
 		jButton1 = new JButton();
 		jButton1.setText("Go Back to Dashboard");
@@ -59,17 +65,18 @@ public class EmployeesPage extends JFrame {
 
 		// Create an empty default table model
 		DefaultTableModel model = new DefaultTableModel(new Object[][] {}, new String[] { "Employee Number",
-				"Last Name", "First Name", "SSS No.", "PhilHealth No.", "TIN", "Pagibig No.", "" }) {
+				"Last Name", "First Name", "SSS No.", "PhilHealth No.", "TIN", "Pagibig No.", "", "" }) {
 			@Override
 			public Class<?> getColumnClass(int columnIndex) {
 				// Return the appropriate class for the last column (column with buttons)
-				return columnIndex == getColumnCount() - 1 ? JButton.class : Object.class;
+				return (columnIndex == getColumnCount() - 1) || (columnIndex == getColumnCount() - 2) ? JButton.class
+						: Object.class;
 			}
 
 			@Override
 			public boolean isCellEditable(int row, int column) {
 				// Allow editing only for the last column
-				return column == getColumnCount() - 1;
+				return column == getColumnCount() - 1 || column == getColumnCount() - 2;
 			}
 		};
 
@@ -77,9 +84,24 @@ public class EmployeesPage extends JFrame {
 		jTable1 = new JTable(model);
 		jTable1.setRowHeight(30);
 
-		// Set a custom renderer and editor for the last column
-		jTable1.getColumnModel().getColumn(model.getColumnCount() - 1).setCellRenderer(new ButtonRenderer());
-		jTable1.getColumnModel().getColumn(model.getColumnCount() - 1).setCellEditor(new ButtonEditor());
+		// Modify the width of the first column
+		TableColumn firstColumn = jTable1.getColumnModel().getColumn(0);
+		firstColumn.setPreferredWidth(20); // Set your preferred width here
+
+		// Modify the width of the last column
+		TableColumn lastColumn = jTable1.getColumnModel().getColumn(numberOfColumns);
+		lastColumn.setPreferredWidth(100); // Set your preferred width here
+
+		// Set a custom renderer and editor for the View Employee column
+		jTable1.getColumnModel().getColumn(model.getColumnCount() - 1)
+				.setCellRenderer(new ButtonRenderer("View Employee"));
+		jTable1.getColumnModel().getColumn(model.getColumnCount() - 1)
+				.setCellEditor(new ButtonEditor(0, "View Employee", "FullEmployeeDetailsPage"));
+
+		// Set a custom renderer and editor for the Edit Column
+		jTable1.getColumnModel().getColumn(model.getColumnCount() - 2).setCellRenderer(new ButtonRenderer("Edit"));
+		jTable1.getColumnModel().getColumn(model.getColumnCount() - 2)
+				.setCellEditor(new ButtonEditor(0, "Edit", "UpdateEmployeeDetailsPage"));
 
 		// Set custom renderer for the header cells to make them bold
 		JTableHeader header = jTable1.getTableHeader();
@@ -87,17 +109,39 @@ public class EmployeesPage extends JFrame {
 
 		jScrollPane1 = new JScrollPane(jTable1);
 
+		addEmployeeButton.setText("Add");
+		addEmployeeButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				addEmployeeButtonActionPerformed(evt);
+			}
+		});
+
+		deleteEmployeeButton.setText("Delete");
+		deleteEmployeeButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				deleteEmployeeButtonActionPerformed(evt);
+			}
+		});
+
 		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
 		getContentPane().setLayout(layout);
-		layout.setHorizontalGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addGroup(layout
-				.createSequentialGroup().addContainerGap()
-				.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-						.addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 996, Short.MAX_VALUE)
-						.addGroup(layout.createSequentialGroup().addComponent(jButton1).addGap(0, 0, Short.MAX_VALUE)))
-				.addContainerGap()));
+		layout.setHorizontalGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGroup(layout.createSequentialGroup().addContainerGap()
+						.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+								.addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 996, Short.MAX_VALUE)
+								.addGroup(layout.createSequentialGroup().addComponent(jButton1)
+										.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+												javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+										.addComponent(addEmployeeButton)
+										.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+										.addComponent(deleteEmployeeButton)))
+						.addContainerGap()));
 		layout.setVerticalGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addGroup(
 				javax.swing.GroupLayout.Alignment.TRAILING,
-				layout.createSequentialGroup().addContainerGap(13, Short.MAX_VALUE).addComponent(jButton1)
+				layout.createSequentialGroup().addContainerGap(13, Short.MAX_VALUE)
+						.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+								.addComponent(jButton1).addComponent(addEmployeeButton)
+								.addComponent(deleteEmployeeButton))
 						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
 						.addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 428,
 								javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -147,16 +191,27 @@ public class EmployeesPage extends JFrame {
 		});
 	}
 
+	private void addEmployeeButtonActionPerformed(java.awt.event.ActionEvent evt) {
+		// TODO add your handling code here:
+	}
+
+	private void deleteEmployeeButtonActionPerformed(java.awt.event.ActionEvent evt) {
+		// TODO add your handling code here:
+	}
+
 	// Custom on-render look for the button column
 	private class ButtonRenderer extends JButton implements TableCellRenderer {
-		public ButtonRenderer() {
+		private String buttonLabel;
+
+		public ButtonRenderer(String buttonLabel) {
+			this.buttonLabel = buttonLabel;
 			setOpaque(true);
 		}
 
 		@Override
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
 				int row, int column) {
-			setText("View Employee");
+			setText(buttonLabel);
 			return this;
 		}
 	}
@@ -164,19 +219,35 @@ public class EmployeesPage extends JFrame {
 	// Custom click-event look for the button column
 	private class ButtonEditor extends AbstractCellEditor implements TableCellEditor {
 		private JButton button;
+		private int targetColumn;
+		private String buttonLabel;
 
-		public ButtonEditor() {
-			button = new JButton("View Employee");
+		public ButtonEditor(int targetColumn, String buttonLabel, String page) {
+			this.targetColumn = targetColumn;
+			this.buttonLabel = buttonLabel;
+			button = new JButton(this.buttonLabel);
 			button.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					java.awt.EventQueue.invokeLater(new Runnable() {
 						public void run() {
-							// Remove the EmployeesPage Window
 							dispose();
 
-							// Go back to the dashboard page
-							new FullEmployeeDetailsPage(employeeGI, employeeComp).setVisible(true);
+							// Check what page to go to
+							switch (page) {
+							case "FullEmployeeDetailsPage":
+								// Go to the employees information page
+								new FullEmployeeDetailsPage(employeeGI, employeeComp).setVisible(true);
+								break;
+							case "UpdateEmployeeDetailsPage":
+								// Go to the employees information page
+								new UpdateEmployeeDetailsPage(employeeGI, employeeComp).setVisible(true);
+								break;
+							default:
+								new FullEmployeeDetailsPage(employeeGI, employeeComp).setVisible(true);
+								break;
+							}
+
 						}
 					});
 				}
@@ -188,12 +259,12 @@ public class EmployeesPage extends JFrame {
 				int column) {
 
 			// Call constructor
-			employeeGI = new GovernmentIdentification(jTable1.getValueAt(row, column - 7).toString());
-			employeeComp = new Compensation(jTable1.getValueAt(row, column - 7).toString());
+			employeeGI = new GovernmentIdentification(jTable1.getValueAt(row, targetColumn).toString());
+			employeeComp = new Compensation(jTable1.getValueAt(row, targetColumn).toString());
 
 			// Set all the important information to be passed
 			try {
-				setEmployeeInformationObject(jTable1.getValueAt(row, column - 7).toString());
+				setEmployeeInformationObject(jTable1.getValueAt(row, targetColumn).toString());
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
