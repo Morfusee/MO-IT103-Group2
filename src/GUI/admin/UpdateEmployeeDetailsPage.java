@@ -1,4 +1,4 @@
-package GUI;
+package GUI.admin;
 
 import java.awt.Dimension;
 import java.io.FileReader;

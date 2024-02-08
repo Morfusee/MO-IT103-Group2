@@ -8,6 +8,7 @@ import javax.swing.*;
 import javax.swing.border.*;
 
 import Classes.User;
+import GUI.admin.DashboardPage;
 
 public class LoginPage extends JFrame {
 	private JTextField usernameField = new JTextField();

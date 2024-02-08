@@ -1,4 +1,4 @@
-package GUI;
+package GUI.admin;
 
 import java.awt.*;
 import java.awt.event.*;

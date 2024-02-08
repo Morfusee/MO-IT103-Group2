@@ -2,8 +2,8 @@ import javax.swing.*;
 import java.awt.*;
 import javax.swing.border.EmptyBorder;
 
-import GUI.FullEmployeeDetailsPage;
 import GUI.LoginPage;
+import GUI.admin.FullEmployeeDetailsPage;
 
 public class Main {
 

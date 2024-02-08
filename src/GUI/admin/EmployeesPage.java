@@ -1,4 +1,4 @@
-package GUI;
+package GUI.admin;
 
 import javax.swing.table.*;
 
@@ -82,7 +82,8 @@ public class EmployeesPage extends JFrame {
 			@Override
 			public boolean isCellEditable(int row, int column) {
 				// Allow editing only for the last column
-				return column == getColumnCount() - 1 || column == getColumnCount() - 2;
+				return column == getColumnCount() - 1 || column == getColumnCount() - 2
+						|| column == getColumnCount() - 3;
 			}
 		};
 
