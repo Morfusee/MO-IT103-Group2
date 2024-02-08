@@ -5,11 +5,18 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
+import Classes.LeaveRequest;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.swing.JLabel;
 
@@ -18,6 +25,10 @@ public class JsonFileHandler {
 	private static final String attendanceJson = "./resources/JSON_Files/Attendance.json";
 
 	private static final String employeesJson = "./resources/JSON_Files/Employees.json";
+
+	private static final String loginCredentialsJson = "./resources/JSON_Files/LoginCredentials.json";
+
+	private static final String leaveRequestCredentialsJson = "./resources/JSON_Files/LeaveRequest.json";
 
 	private JsonFileHandler() {
 		throw new AssertionError();
@@ -31,8 +42,30 @@ public class JsonFileHandler {
 		return employeesJson;
 	}
 
+	public static String getLoginCredentialsJsonPath() {
+		return loginCredentialsJson;
+	}
+
+	public static String getLeaveRequestJsonPath() {
+		return leaveRequestCredentialsJson;
+	}
+
 	public static JsonArray getEmployeesJSON() throws IOException {
 		BufferedReader reader = new BufferedReader(new FileReader(getEmployeesJsonPath()));
+		Gson gson = new Gson();
+		JsonArray json = gson.fromJson(reader, JsonArray.class);
+		return json;
+	}
+
+	public static JsonArray getLoginCredentialsJSON() throws IOException {
+		BufferedReader reader = new BufferedReader(new FileReader(getLoginCredentialsJsonPath()));
+		Gson gson = new Gson();
+		JsonArray json = gson.fromJson(reader, JsonArray.class);
+		return json;
+	}
+
+	public static JsonArray getLeaveRequestJSON() throws IOException {
+		BufferedReader reader = new BufferedReader(new FileReader(getLeaveRequestJsonPath()));
 		Gson gson = new Gson();
 		JsonArray json = gson.fromJson(reader, JsonArray.class);
 		return json;
@@ -112,5 +145,47 @@ public class JsonFileHandler {
 			}
 		}
 		return false;
+	}
+
+	public static void writeJsonFile(String json, String filePath) {
+		try (FileWriter writer = new FileWriter(filePath)) {
+			writer.write(json);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void addToJsonFile(List<LeaveRequest> leaveRequests, String filePath) {
+		try {
+			Gson gson = new Gson();
+
+			// Convert the list of LeaveRequest objects to a JSON array
+			String jsonArray = gson.toJson(leaveRequests);
+
+			// Write the JSON array to the file
+			Files.writeString(Paths.get(filePath), jsonArray);
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static List<LeaveRequest> readLeaveRequestsFromFile(String filePath) {
+		try {
+			String content = Files.readString(Paths.get(filePath));
+
+			// Check if the content is empty or not a valid JSON array
+			if (content.isEmpty() || !content.trim().startsWith("[") || !content.trim().endsWith("]")) {
+				// If so, return an empty list or handle the case as needed
+				return new ArrayList<>();
+			} else {
+				// Otherwise, create a new ArrayList from the array returned by fromJson
+				LeaveRequest[] leaveRequestsArray = new Gson().fromJson(content, LeaveRequest[].class);
+				return new ArrayList<>(Arrays.asList(leaveRequestsArray));
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			return new ArrayList<>();
+		}
 	}
 }

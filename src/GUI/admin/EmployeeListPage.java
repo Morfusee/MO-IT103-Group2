@@ -28,7 +28,7 @@ import java.util.Iterator;
 import javax.swing.*;
 
 @SuppressWarnings("serial")
-public class EmployeesPage extends JFrame {
+public class EmployeeListPage extends JFrame {
 
 	private JScrollPane jScrollPane1;
 	private JButton jButton1;
@@ -42,7 +42,7 @@ public class EmployeesPage extends JFrame {
 	GovernmentIdentification employeeGI;
 	Compensation employeeComp;
 
-	public EmployeesPage() {
+	public EmployeeListPage() {
 		initComponents();
 		loadEmployeeData();
 	}
@@ -220,7 +220,7 @@ public class EmployeesPage extends JFrame {
 				dispose();
 
 				// Refresh the Employees Page
-				new EmployeesPage().setVisible(true);
+				new EmployeeListPage().setVisible(true);
 			}
 		});
 
@@ -334,7 +334,8 @@ public class EmployeesPage extends JFrame {
 
 			// Set all the important information to be passed
 			try {
-				setEmployeeInformationObject(jTable1.getValueAt(row, targetColumn).toString());
+				EmployeeInformation.setEmployeeInformationObject(jTable1.getValueAt(row, targetColumn).toString(),
+						employeeGI, employeeComp);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -372,41 +373,5 @@ public class EmployeesPage extends JFrame {
 
 			return c;
 		}
-	}
-
-	public void setEmployeeInformationObject(String employeeNumber) throws IOException {
-
-		// Iterate through the JSON file for the employee data
-		JsonObject employeeData = JsonFileHandler.nameIterator(JsonFileHandler.getEmployeesJSON(), "employeeNum",
-				employeeNumber);
-
-		// Instantiate Gson to get their Json counterparts
-		Gson gson = new Gson();
-		GovernmentIdentification employeeGovInfo = gson.fromJson(employeeData, GovernmentIdentification.class);
-		Compensation employeeCompInfo = gson.fromJson(employeeData, Compensation.class);
-
-		// Set the employee's identity information
-		employeeGI.setLastName(employeeGovInfo.getLastName());
-		employeeGI.setFirstName(employeeGovInfo.getFirstName());
-		employeeGI.setBirthday(employeeGovInfo.getBirthday());
-		employeeGI.setAddress(employeeGovInfo.getAddress());
-		employeeGI.setPhoneNumber(employeeGovInfo.getPhoneNumber());
-		employeeGI.setImmediateSupervisor(employeeGovInfo.getImmediateSupervisor());
-		employeeGI.setStatus(employeeGovInfo.getStatus());
-		employeeGI.setPosition(employeeGovInfo.getPosition());
-
-		// Set Government Identification data of Employee
-		employeeGI.setSSSNumber(employeeGovInfo.getSSSNumber());
-		employeeGI.setPhilHealthNumber(employeeGovInfo.getPhilHealthNumber());
-		employeeGI.setPagibigNumber(employeeGovInfo.getPagibigNumber());
-		employeeGI.setTinNumber(employeeGovInfo.getTinNumber());
-
-		// Set Compensation data of Employee
-		employeeComp.setBasicSalary(employeeCompInfo.getBasicSalary());
-		employeeComp.setClothingAllowance(employeeCompInfo.getClothingAllowance());
-		employeeComp.setGrossSemiMonthlyRate(employeeCompInfo.getGrossSemiMonthlyRate());
-		employeeComp.setPhoneAllowance(employeeCompInfo.getPhoneAllowance());
-		employeeComp.setRiceSubsidy(employeeCompInfo.getRiceSubsidy());
-		employeeComp.setHourlyRate(employeeCompInfo.getHourlyRate());
 	}
 }

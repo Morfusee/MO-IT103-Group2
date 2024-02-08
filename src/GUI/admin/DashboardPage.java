@@ -12,6 +12,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import Classes.Compensation;
+import Classes.EmployeeInformation;
 import Classes.GovernmentIdentification;
 import UtilityClasses.JsonFileHandler;
 
@@ -461,7 +462,7 @@ public class DashboardPage extends JFrame {
 				dispose();
 
 				// Go to the employees list page
-				new EmployeesPage().setVisible(true);
+				new EmployeeListPage().setVisible(true);
 			}
 		});
 	}
@@ -493,7 +494,7 @@ public class DashboardPage extends JFrame {
 		JsonFileHandler.labelAssigner(employeeData, stringifiedLabels, labels);
 
 		// Set the employeeData to the employeeComp and employeeGI objects
-		setEmployeeInformationObject(employeeData);
+		EmployeeInformation.setEmployeeInformationObject(employeeIdField.getText(), employeeGI, employeeComp);
 
 		// Let user click the compute button if user exists
 		computeButton.setEnabled(true);
@@ -510,7 +511,7 @@ public class DashboardPage extends JFrame {
 	}
 
 	public void setEmployeeInformationObject(JsonObject employeeData) {
-		
+
 		// Instantiate Gson to get their Json counterparts
 		Gson gson = new Gson();
 		GovernmentIdentification employeeGovInfo = gson.fromJson(employeeData, GovernmentIdentification.class);

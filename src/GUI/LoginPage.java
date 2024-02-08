@@ -7,8 +7,16 @@ import java.io.IOException;
 import javax.swing.*;
 import javax.swing.border.*;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
+import Classes.Compensation;
+import Classes.EmployeeInformation;
+import Classes.GovernmentIdentification;
 import Classes.User;
 import GUI.admin.DashboardPage;
+import GUI.employee.EmployeeDashboard;
+import UtilityClasses.JsonFileHandler;
 
 public class LoginPage extends JFrame {
 	private JTextField usernameField = new JTextField();
@@ -16,6 +24,8 @@ public class LoginPage extends JFrame {
 	private JLabel usernameLabel = new JLabel("Username");
 	private JLabel passwordLabel = new JLabel("Password");
 	private JButton loginButton = new JButton("Login");
+	private GovernmentIdentification employeeGI;
+	private Compensation employeeComp;
 
 	public LoginPage() {
 
@@ -117,18 +127,40 @@ public class LoginPage extends JFrame {
 		if (userInfo.getLoginStatus().equals(false)) {
 			JOptionPane.showMessageDialog(new JFrame(""), "User credentials incorrect.", "Login Failed",
 					JOptionPane.ERROR_MESSAGE);
-		} else {
-			// Close the last page
-			dispose();
 
-			// Proceed to the next page once logged in
-			/* Create and display the form */
-			java.awt.EventQueue.invokeLater(new Runnable() {
-				public void run() {
-					new DashboardPage().setVisible(true);
-				}
-			});
+			return;
 		}
+		// Close the last page
+		dispose();
+		java.awt.EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				if (userInfo.getIsAdmin()) {
+					// Proceed to the next page once logged in
+					// Create and display the form
+
+					new DashboardPage().setVisible(true);
+
+				} else {
+
+					try {
+						// Call constructor
+						employeeGI = new GovernmentIdentification(userInfo.getEmployeeNumber());
+						employeeComp = new Compensation(userInfo.getEmployeeNumber());
+
+						// Set all the data for the logged in employee
+						EmployeeInformation.setEmployeeInformationObject(userInfo.getEmployeeNumber(), employeeGI,
+								employeeComp);
+
+						// If user is an employee, go to employee dashboard page
+						new EmployeeDashboard(employeeGI, employeeComp).setVisible(true);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+
 	}
 
 }

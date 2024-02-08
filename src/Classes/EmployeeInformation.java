@@ -2,7 +2,11 @@ package Classes;
 
 import java.io.IOException;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.google.gson.annotations.SerializedName;
+
+import UtilityClasses.JsonFileHandler;
 
 public class EmployeeInformation extends User {
 
@@ -108,5 +112,42 @@ public class EmployeeInformation extends User {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public static void setEmployeeInformationObject(String employeeNumber, GovernmentIdentification employeeGI,
+			Compensation employeeComp) throws IOException {
+
+		// Iterate through the JSON file for the employee data
+		JsonObject employeeData = JsonFileHandler.nameIterator(JsonFileHandler.getEmployeesJSON(), "employeeNum",
+				employeeNumber);
+
+		// Instantiate Gson to get their Json counterparts
+		Gson gson = new Gson();
+		GovernmentIdentification employeeGovInfo = gson.fromJson(employeeData, GovernmentIdentification.class);
+		Compensation employeeCompInfo = gson.fromJson(employeeData, Compensation.class);
+
+		// Set the employee's identity information
+		employeeGI.setLastName(employeeGovInfo.getLastName());
+		employeeGI.setFirstName(employeeGovInfo.getFirstName());
+		employeeGI.setBirthday(employeeGovInfo.getBirthday());
+		employeeGI.setAddress(employeeGovInfo.getAddress());
+		employeeGI.setPhoneNumber(employeeGovInfo.getPhoneNumber());
+		employeeGI.setImmediateSupervisor(employeeGovInfo.getImmediateSupervisor());
+		employeeGI.setStatus(employeeGovInfo.getStatus());
+		employeeGI.setPosition(employeeGovInfo.getPosition());
+
+		// Set Government Identification data of Employee
+		employeeGI.setSSSNumber(employeeGovInfo.getSSSNumber());
+		employeeGI.setPhilHealthNumber(employeeGovInfo.getPhilHealthNumber());
+		employeeGI.setPagibigNumber(employeeGovInfo.getPagibigNumber());
+		employeeGI.setTinNumber(employeeGovInfo.getTinNumber());
+
+		// Set Compensation data of Employee
+		employeeComp.setBasicSalary(employeeCompInfo.getBasicSalary());
+		employeeComp.setClothingAllowance(employeeCompInfo.getClothingAllowance());
+		employeeComp.setGrossSemiMonthlyRate(employeeCompInfo.getGrossSemiMonthlyRate());
+		employeeComp.setPhoneAllowance(employeeCompInfo.getPhoneAllowance());
+		employeeComp.setRiceSubsidy(employeeCompInfo.getRiceSubsidy());
+		employeeComp.setHourlyRate(employeeCompInfo.getHourlyRate());
 	}
 }

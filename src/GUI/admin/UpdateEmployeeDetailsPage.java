@@ -393,7 +393,7 @@ public class UpdateEmployeeDetailsPage extends JFrame {
 		String updatedJson = jsonArray.toString();
 
 		// Write the updated JSON back to the file
-		writeJsonFile(updatedJson, JsonFileHandler.getEmployeesJsonPath());
+		JsonFileHandler.writeJsonFile(updatedJson, JsonFileHandler.getEmployeesJsonPath());
 
 		// Go back to the employee list page
 		java.awt.EventQueue.invokeLater(new Runnable() {
@@ -401,18 +401,10 @@ public class UpdateEmployeeDetailsPage extends JFrame {
 				// Remove the UpdateEmployeeDetailsPage Window
 				dispose();
 
-				new EmployeesPage().setVisible(true);
+				new EmployeeListPage().setVisible(true);
 			}
 		});
 
-	}
-
-	private static void writeJsonFile(String json, String filePath) {
-		try (FileWriter writer = new FileWriter(filePath)) {
-			writer.write(json);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 
 	private static boolean updateEntry(JsonArray jsonArray, String employeeNumToUpdate, StringBuilder errorMessage) {
@@ -508,8 +500,8 @@ public class UpdateEmployeeDetailsPage extends JFrame {
 			public void run() {
 				// Remove the EmployeesPage Window
 				dispose();
-				
-				new EmployeesPage().setVisible(true);
+
+				new EmployeeListPage().setVisible(true);
 			}
 		});
 	}

@@ -21,6 +21,7 @@ public class User {
 	private Boolean isVerified = false;
 	private Date dateRegistered;
 	private Boolean loginStatus = false;
+	private Boolean isAdmin = false;
 
 	public User(String userId, String password) throws IOException {
 		this.userId = userId;
@@ -29,13 +30,17 @@ public class User {
 			authenticateLogin();
 		}
 	}
-	
+
 	public User(String employeeNumber) {
-		this.employeeNumber = employeeNumber;
+		setEmployeeNumber(employeeNumber);
 	}
-	
+
 	public String getEmployeeNumber() {
 		return employeeNumber;
+	}
+
+	public void setEmployeeNumber(String value) {
+		this.employeeNumber = value;
 	}
 
 	/* userId getter/setter */
@@ -83,20 +88,34 @@ public class User {
 		return loginStatus;
 	}
 
+	public void setIsAdmin(Boolean value) {
+		this.isAdmin = value;
+	}
+
+	public Boolean getIsAdmin() {
+		return isAdmin;
+	}
+
 	public void authenticateLogin() throws IOException {
 		if (!userId.equals("admin")) {
-			setLoginStatus(JsonFileHandler.compareLoginCredentials(JsonFileHandler.getEmployeesJSON(), "employeeNum",
-					userId, "last_name", password));
+			// Set the employee number if the user is not an admin
+			setEmployeeNumber(JsonFileHandler.nameIterator(JsonFileHandler.getLoginCredentialsJSON(), "username",
+					userId, "employeeNum"));
+
+			// Check the login status
+			setLoginStatus(JsonFileHandler.compareLoginCredentials(JsonFileHandler.getLoginCredentialsJSON(),
+					"username", userId, "password", password));
 			return;
 		}
-		
-		// Check one more time if user is an admin
+
+		// Check if user is an admin
 		setLoginStatus(authenticateAdminLogin(userId, password));
 		return;
 	}
 
 	private Boolean authenticateAdminLogin(String userId, String password) {
 		if (userId.equals("admin") && password.equals("123")) {
+			setIsAdmin(true);
 			return true;
 		}
 		return false;

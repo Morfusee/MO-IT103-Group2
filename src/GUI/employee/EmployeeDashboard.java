@@ -1,4 +1,4 @@
-package GUI.admin;
+package GUI.employee;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -23,13 +23,13 @@ import Classes.GovernmentIdentification;
 import UtilityClasses.JsonFileHandler;
 import UtilityClasses.SalaryCalculator;
 
-public class FullEmployeeDetailsPage extends JFrame {
+public class EmployeeDashboard extends JFrame {
 
 	// Variables declaration - do not modify
 	private javax.swing.JLabel address;
 	private javax.swing.JLabel addressValue;
 	private javax.swing.JLabel allowancesLabel;
-	private javax.swing.JButton backToEmployeeListButton;
+	private javax.swing.JButton submitLeaveRequestButton;
 	private javax.swing.JLabel birthday;
 	private javax.swing.JLabel birthdayValue;
 	private javax.swing.JLabel clothingAllowanceLabel;
@@ -102,6 +102,7 @@ public class FullEmployeeDetailsPage extends JFrame {
 	private javax.swing.JLabel totalDeductionsValue;
 	private javax.swing.JLabel withHoldingTaxLabel;
 	private javax.swing.JLabel withHoldingTaxValue;
+	private javax.swing.JLabel welcomeLabel;
 	private GovernmentIdentification employeeGI;
 	private Compensation employeeComp;
 	private Double totalAllowance;
@@ -113,7 +114,7 @@ public class FullEmployeeDetailsPage extends JFrame {
 	private DecimalFormat numberFormat = new DecimalFormat("#.00");
 	// End of variables declaration
 
-	public FullEmployeeDetailsPage(GovernmentIdentification employeeGI, Compensation employeeComp) {
+	public EmployeeDashboard(GovernmentIdentification employeeGI, Compensation employeeComp) {
 
 		// Put the class objects onto a higher scope
 		this.employeeGI = employeeGI;
@@ -208,11 +209,12 @@ public class FullEmployeeDetailsPage extends JFrame {
 		pagibigNumberValue = new javax.swing.JLabel();
 		tinNumber = new javax.swing.JLabel();
 		tinNumberValue = new javax.swing.JLabel();
+		welcomeLabel = new javax.swing.JLabel();
 		monthDropdown = new javax.swing.JComboBox<>();
 		computeButton = new javax.swing.JButton();
-		backToEmployeeListButton = new javax.swing.JButton();
+		submitLeaveRequestButton = new javax.swing.JButton();
 
-		setTitle("MotorPH Payroll System | Full Details of Employee");
+		setTitle("MotorPH Payroll System | Full Details of " + employeeGI.getLastName());
 		setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 		setResizable(false);
 
@@ -761,51 +763,63 @@ public class FullEmployeeDetailsPage extends JFrame {
 			}
 		});
 
-		backToEmployeeListButton.setText("Go Back to Employee List");
-		backToEmployeeListButton.addActionListener(new java.awt.event.ActionListener() {
+		submitLeaveRequestButton.setText("Submit Leave Request");
+		submitLeaveRequestButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				backToEmployeeListButtonActionPerformed(evt);
 			}
 		});
 
+		welcomeLabel.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+		welcomeLabel.setText("Welcome, " + employeeGI.getLastName() + ".");
+
 		javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
 		jPanel1.setLayout(jPanel1Layout);
 		jPanel1Layout.setHorizontalGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 				.addGroup(jPanel1Layout.createSequentialGroup().addContainerGap(41, Short.MAX_VALUE)
-						.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-								.addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 948,
-										javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addGroup(jPanel1Layout.createSequentialGroup()
-										.addComponent(backToEmployeeListButton, javax.swing.GroupLayout.PREFERRED_SIZE,
-												206, javax.swing.GroupLayout.PREFERRED_SIZE)
-										.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED,
-												javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-										.addComponent(monthDropdown, javax.swing.GroupLayout.PREFERRED_SIZE, 179,
+						.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+								.addComponent(welcomeLabel)
+								.addGroup(jPanel1Layout
+										.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+										.addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING,
+												javax.swing.GroupLayout.PREFERRED_SIZE, 948,
 												javax.swing.GroupLayout.PREFERRED_SIZE)
-										.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-										.addComponent(computeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 89,
-												javax.swing.GroupLayout.PREFERRED_SIZE)))
+										.addGroup(jPanel1Layout.createSequentialGroup()
+												.addComponent(submitLeaveRequestButton,
+														javax.swing.GroupLayout.PREFERRED_SIZE, 206,
+														javax.swing.GroupLayout.PREFERRED_SIZE)
+												.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+														javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+												.addComponent(monthDropdown, javax.swing.GroupLayout.PREFERRED_SIZE,
+														179, javax.swing.GroupLayout.PREFERRED_SIZE)
+												.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+												.addComponent(computeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 89,
+														javax.swing.GroupLayout.PREFERRED_SIZE))))
 						.addContainerGap(41, Short.MAX_VALUE)));
 		jPanel1Layout.setVerticalGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(jPanel1Layout.createSequentialGroup().addGap(38, 38, 38)
+				.addGroup(jPanel1Layout.createSequentialGroup().addContainerGap(39, Short.MAX_VALUE)
+						.addComponent(welcomeLabel)
+						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
 						.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
 								.addComponent(computeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33,
 										javax.swing.GroupLayout.PREFERRED_SIZE)
 								.addComponent(monthDropdown, javax.swing.GroupLayout.PREFERRED_SIZE, 33,
 										javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addComponent(backToEmployeeListButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33,
+								.addComponent(submitLeaveRequestButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33,
 										javax.swing.GroupLayout.PREFERRED_SIZE))
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-						.addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 438,
+						.addGap(12, 12, 12).addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 438,
 								javax.swing.GroupLayout.PREFERRED_SIZE)
-						.addContainerGap(35, Short.MAX_VALUE)));
+						.addGap(27, 27, 27)));
 
 		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
 		getContentPane().setLayout(layout);
 		layout.setHorizontalGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addComponent(
 				jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE));
-		layout.setVerticalGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addComponent(
-				jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE));
+		layout.setVerticalGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGroup(layout.createSequentialGroup()
+						.addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE,
+								javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+						.addGap(0, 0, Short.MAX_VALUE)));
 
 		pack();
 
@@ -867,8 +881,7 @@ public class FullEmployeeDetailsPage extends JFrame {
 				// Remove the EmployeesPage Window
 				dispose();
 
-				// Go back to the dashboard page
-				new EmployeeListPage().setVisible(true);
+				new LeaveRequestPage(employeeGI, employeeComp).setVisible(true);
 			}
 		});
 	}
