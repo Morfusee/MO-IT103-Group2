@@ -4,8 +4,11 @@ import java.awt.Dimension;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -372,13 +375,19 @@ public class UpdateEmployeeDetailsPage extends JFrame {
 	}// </editor-fold>
 
 	private void confirmButtonActionPerformed(java.awt.event.ActionEvent evt) throws IOException {
+		// Instantiate error message in case of misinput
+		StringBuilder errorMessage = new StringBuilder();
+
 		// Read the JSON file and parse it into a Java object
 		JsonArray jsonArray = JsonFileHandler.getEmployeesJSON();
 
 		// Update a specific entry in the Java object
 		String employeeNumToUpdate = employeeNumberField.getText();
 
-		updateEntry(jsonArray, employeeNumToUpdate);
+		if (!updateEntry(jsonArray, employeeNumToUpdate, errorMessage)) {
+			errorDialogPane(errorMessage, "Error");
+			return;
+		}
 
 		// Convert the Java object back to JSON
 		String updatedJson = jsonArray.toString();
@@ -406,57 +415,91 @@ public class UpdateEmployeeDetailsPage extends JFrame {
 		}
 	}
 
-	private static void updateEntry(JsonArray jsonArray, String employeeNumToUpdate) {
-		for (JsonElement element : jsonArray) {
-			if (element.isJsonObject()) {
-				JsonObject employeeObject = element.getAsJsonObject();
-				if (employeeObject.has("employeeNum")
-						&& employeeObject.get("employeeNum").getAsString().equals(employeeNumToUpdate)) {
-					// Update the values for the specified employeeNum
-					updateProperty(employeeObject, "last_name", lastNameField.getText());
-					updateProperty(employeeObject, "first_name", firstNameField.getText());
-					updateProperty(employeeObject, "birthday", birthdayField.getText());
-					updateProperty(employeeObject, "address", addressField.getText());
-					updateProperty(employeeObject, "phone_number", phoneNumberField.getText());
-					updateProperty(employeeObject, "SSS", sssField.getText());
-					updateProperty(employeeObject, "Philhealth", Long.parseLong(philhealthField.getText()));
-					updateProperty(employeeObject, "TIN", tinField.getText());
-					updateProperty(employeeObject, "Pag-ibig", Long.parseLong(pagibigField.getText()));
-					updateProperty(employeeObject, "Status", statusField.getText());
-					updateProperty(employeeObject, "Position", positionField.getText());
-					updateProperty(employeeObject, "immediate_supervisor", immediateSupervisorField.getText());
-					updateProperty(employeeObject, "basic_salary", Double.parseDouble(basicSalaryField.getText()));
-					updateProperty(employeeObject, "rice_subsidy", Double.parseDouble(riceSubsidyField.getText()));
-					updateProperty(employeeObject, "phone_allowance",
-							Double.parseDouble(phoneAllowanceField.getText()));
-					updateProperty(employeeObject, "clothing_allowance",
-							Double.parseDouble(clothingAllowanceField.getText()));
-					updateProperty(employeeObject, "gross_semi-monthly_rate",
-							Double.parseDouble(grossSemiMonthlyRateField.getText()));
-					updateProperty(employeeObject, "hourly_rate", Double.parseDouble(hourlyRateField.getText()));
+	private static boolean updateEntry(JsonArray jsonArray, String employeeNumToUpdate, StringBuilder errorMessage) {
+		String[] properties = { "last_name", "first_name", "birthday", "address", "phone_number", "SSS", "Philhealth",
+				"TIN", "Pag-ibig", "Status", "Position", "immediate_supervisor", "basic_salary", "rice_subsidy",
+				"phone_allowance", "clothing_allowance", "gross_semi-monthly_rate", "hourly_rate" };
 
-					break; // Break the loop once the entry is updated
+		JTextField[] fields = { lastNameField, firstNameField, birthdayField, addressField, phoneNumberField, sssField,
+				philhealthField, tinField, pagibigField, statusField, positionField, immediateSupervisorField,
+				basicSalaryField, riceSubsidyField, phoneAllowanceField, clothingAllowanceField,
+				grossSemiMonthlyRateField, hourlyRateField };
+
+		JTextField[] numericFields = { pagibigField, philhealthField, basicSalaryField, riceSubsidyField,
+				phoneAllowanceField, clothingAllowanceField, grossSemiMonthlyRateField, hourlyRateField };
+
+		for (JsonElement element : jsonArray) {
+			if (!element.isJsonObject()) {
+				errorMessage.setLength(0); // Clear previous content
+				errorMessage.append("Data is not a Json Object.");
+				return false;
+			}
+
+			JsonObject employeeObject = element.getAsJsonObject();
+			if (employeeObject.has("employeeNum")
+					&& employeeObject.get("employeeNum").getAsString().equals(employeeNumToUpdate)) {
+
+				// Check if all the fields are filled out
+				if (Arrays.stream(fields).anyMatch(field -> field.getText().trim().isEmpty())) {
+					errorMessage.setLength(0); // Clear previous content
+					errorMessage.append("Please fill in all the fields.");
+					return false;
 				}
+
+				if (Arrays.stream(numericFields).anyMatch(numField -> !isNumeric(numField.getText()))) {
+					errorMessage.setLength(0); // Clear previous content
+					errorMessage.append(
+							"Please enter valid numeric values for those that require it. (e.g. Philhealth, Pag-ibig)");
+					return false;
+				}
+
+				// Update the values for the specified employeeNum
+				for (int i = 0; i < properties.length; i++) {
+					updateProperty(employeeObject, properties[i], fields[i].getText());
+				}
+
+				break; // Break the loop once the entry is updated
 			}
 		}
+		return true;
 	}
 
 	private static void updateProperty(JsonObject jsonObject, String propertyName, String propertyValue) {
-		if (jsonObject.has(propertyName)) {
+		if (!jsonObject.has(propertyName)) {
+			return;
+		}
+
+		switch (propertyName) {
+		case "Philhealth":
+		case "Pag-ibig":
+			jsonObject.addProperty(propertyName, Long.parseLong(propertyValue));
+			break;
+		case "basic_salary":
+		case "rice_subsidy":
+		case "phone_allowance":
+		case "clothing_allowance":
+		case "gross_semi-monthly_rate":
+		case "hourly_rate":
+			jsonObject.addProperty(propertyName, Double.parseDouble(propertyValue));
+			break;
+		default:
 			jsonObject.addProperty(propertyName, propertyValue);
+			break;
 		}
 	}
 
-	private static void updateProperty(JsonObject jsonObject, String propertyName, Double propertyValue) {
-		if (jsonObject.has(propertyName)) {
-			jsonObject.addProperty(propertyName, propertyValue);
+	private static boolean isNumeric(String str) {
+		try {
+			// Attempt to parse the input as a number
+			Double.parseDouble(str);
+			return true;
+		} catch (NumberFormatException e) {
+			return false;
 		}
 	}
 
-	private static void updateProperty(JsonObject jsonObject, String propertyName, Long propertyValue) {
-		if (jsonObject.has(propertyName)) {
-			jsonObject.addProperty(propertyName, propertyValue);
-		}
+	private void errorDialogPane(StringBuilder errorMessage, String title) {
+		JOptionPane.showMessageDialog(new JFrame(""), errorMessage, title, JOptionPane.ERROR_MESSAGE);
 	}
 
 	private void goBackToEmployeeListButtonActionPerformed(java.awt.event.ActionEvent evt) throws IOException {
@@ -465,6 +508,8 @@ public class UpdateEmployeeDetailsPage extends JFrame {
 			public void run() {
 				// Remove the EmployeesPage Window
 				dispose();
+				
+				new EmployeesPage().setVisible(true);
 			}
 		});
 	}
