@@ -2,18 +2,24 @@ package GUI.admin;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.border.*;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import Classes.Compensation;
 import Classes.EmployeeInformation;
 import Classes.GovernmentIdentification;
+import GUI.LoginPage;
 import UtilityClasses.JsonFileHandler;
 
 public class DashboardPage extends JFrame {
@@ -77,6 +83,8 @@ public class DashboardPage extends JFrame {
 	private JButton searchButton = new JButton("Search");
 	private JButton computeButton = new JButton("Compute Salary");
 	private JButton employeeListButton = new JButton("Employee List");
+	private JButton leaveRequestButton = new JButton("Leave Requests");
+	private JButton logoutButton = new JButton("Log Out");;
 	private JLabel[] labels = { lastNameValue, firstNameValue, birthdayValue, addressValue, phoneNumberValue,
 			sssNumberValue, philhealthNumberValue, tinNumberValue, pagibigNumberValue, statusValue, positionValue,
 			immediateSupervisorValue, hourlyRateValue };
@@ -159,6 +167,27 @@ public class DashboardPage extends JFrame {
 			}
 		});
 
+		leaveRequestButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+		leaveRequestButton.setText("Leave Requests");
+		leaveRequestButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				try {
+					leaveRequestButtonActionPerformed(evt);
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+
+		logoutButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+		logoutButton.setText("Log Out");
+		logoutButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				logoutButtonActionPerformed(evt);
+			}
+		});
+
 		jPanel2.setBackground(new java.awt.Color(204, 204, 204));
 		jPanel2.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
 
@@ -202,7 +231,7 @@ public class DashboardPage extends JFrame {
 						.addContainerGap(44, Short.MAX_VALUE)));
 		jPanel2Layout.setVerticalGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 				.addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-						.addContainerGap(30, Short.MAX_VALUE).addComponent(firstName)
+						.addContainerGap(29, Short.MAX_VALUE).addComponent(firstName)
 						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
 						.addComponent(firstNameValue)
 						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED).addComponent(lastName)
@@ -352,24 +381,43 @@ public class DashboardPage extends JFrame {
 		javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
 		jPanel1.setLayout(jPanel1Layout);
 		jPanel1Layout.setHorizontalGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(jPanel1Layout.createSequentialGroup().addContainerGap(53, Short.MAX_VALUE)
-						.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-								.addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE,
-										javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addGroup(jPanel1Layout.createSequentialGroup()
-										.addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE,
+				.addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+						.addContainerGap(54, Short.MAX_VALUE)
+						.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addGroup(
+								javax.swing.GroupLayout.Alignment.TRAILING,
+								jPanel1Layout.createSequentialGroup().addGroup(jPanel1Layout
+										.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+										.addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE,
 												javax.swing.GroupLayout.DEFAULT_SIZE,
 												javax.swing.GroupLayout.PREFERRED_SIZE)
-										.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-										.addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE,
-												javax.swing.GroupLayout.DEFAULT_SIZE,
-												javax.swing.GroupLayout.PREFERRED_SIZE)
-										.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-										.addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE,
-												javax.swing.GroupLayout.DEFAULT_SIZE,
-												javax.swing.GroupLayout.PREFERRED_SIZE)))
-						.addGap(51, 51, 51))
-				.addGroup(jPanel1Layout.createSequentialGroup().addGap(82, 82, 82).addComponent(employeeId)
+										.addGroup(jPanel1Layout.createSequentialGroup()
+												.addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE,
+														javax.swing.GroupLayout.DEFAULT_SIZE,
+														javax.swing.GroupLayout.PREFERRED_SIZE)
+												.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+												.addGroup(jPanel1Layout
+														.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING,
+																false)
+														.addGroup(jPanel1Layout.createSequentialGroup()
+																.addComponent(leaveRequestButton)
+																.addPreferredGap(
+																		javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+																.addComponent(employeeListButton,
+																		javax.swing.GroupLayout.DEFAULT_SIZE,
+																		javax.swing.GroupLayout.DEFAULT_SIZE,
+																		Short.MAX_VALUE))
+														.addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE,
+																javax.swing.GroupLayout.DEFAULT_SIZE,
+																javax.swing.GroupLayout.PREFERRED_SIZE))
+												.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+												.addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE,
+														javax.swing.GroupLayout.DEFAULT_SIZE,
+														javax.swing.GroupLayout.PREFERRED_SIZE)))
+										.addGap(50, 50, 50))
+								.addGroup(javax.swing.GroupLayout.Alignment.TRAILING,
+										jPanel1Layout.createSequentialGroup().addComponent(logoutButton)
+												.addContainerGap())))
+				.addGroup(jPanel1Layout.createSequentialGroup().addGap(137, 137, 137).addComponent(employeeId)
 						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
 						.addComponent(employeeIdField, javax.swing.GroupLayout.PREFERRED_SIZE, 257,
 								javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -377,22 +425,27 @@ public class DashboardPage extends JFrame {
 						.addComponent(searchButton, javax.swing.GroupLayout.PREFERRED_SIZE, 110,
 								javax.swing.GroupLayout.PREFERRED_SIZE)
 						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED).addComponent(computeButton)
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addComponent(employeeListButton)
-						.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
+						.addGap(0, 0, Short.MAX_VALUE)));
 		jPanel1Layout.setVerticalGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(jPanel1Layout.createSequentialGroup().addGap(39, 39, 39)
+				.addGroup(jPanel1Layout.createSequentialGroup().addContainerGap()
+						.addComponent(logoutButton, javax.swing.GroupLayout.PREFERRED_SIZE, 21,
+								javax.swing.GroupLayout.PREFERRED_SIZE)
+						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
 						.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
 								.addComponent(employeeIdField, javax.swing.GroupLayout.PREFERRED_SIZE, 31,
 										javax.swing.GroupLayout.PREFERRED_SIZE)
 								.addComponent(searchButton, javax.swing.GroupLayout.PREFERRED_SIZE, 31,
 										javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addComponent(employeeId)
-								.addComponent(computeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 31,
+								.addComponent(employeeId).addComponent(computeButton,
+										javax.swing.GroupLayout.PREFERRED_SIZE, 31,
+										javax.swing.GroupLayout.PREFERRED_SIZE))
+						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+						.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+								.addComponent(leaveRequestButton, javax.swing.GroupLayout.PREFERRED_SIZE, 31,
 										javax.swing.GroupLayout.PREFERRED_SIZE)
 								.addComponent(employeeListButton, javax.swing.GroupLayout.PREFERRED_SIZE, 31,
 										javax.swing.GroupLayout.PREFERRED_SIZE))
-						.addGap(26, 26, 26)
+						.addGap(23, 23, 23)
 						.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 								.addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE,
 										javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -403,7 +456,7 @@ public class DashboardPage extends JFrame {
 						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
 						.addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE,
 								javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-						.addGap(40, 40, 40)));
+						.addGap(55, 55, 55)));
 
 		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
 		getContentPane().setLayout(layout);
@@ -463,6 +516,48 @@ public class DashboardPage extends JFrame {
 
 				// Go to the employees list page
 				new EmployeeListPage().setVisible(true);
+			}
+		});
+	}
+
+	private void leaveRequestButtonActionPerformed(java.awt.event.ActionEvent evt) throws FileNotFoundException {
+		// Read the JSON file and parse it using GSON
+		FileReader reader = new FileReader(JsonFileHandler.getLeaveRequestJsonPath());
+		JsonElement jsonElement = JsonParser.parseReader(reader);
+
+		// Check if the parsed JSON is an array
+		if (!jsonElement.isJsonArray()) {
+			// Display a message to the user
+			JOptionPane.showMessageDialog(this, "No leave requests found.", "Empty Data",
+					JOptionPane.INFORMATION_MESSAGE);
+
+			return;
+		}
+
+		java.awt.EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				// Close the dashboard page
+				dispose();
+
+				// Log out
+				try {
+					new LeaveRequestListPage(employeeGI, employeeComp).setVisible(true);
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	private void logoutButtonActionPerformed(java.awt.event.ActionEvent evt) {
+		java.awt.EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				// Close the dashboard page
+				dispose();
+
+				// Log out
+				new LoginPage().setVisible(true);
 			}
 		});
 	}

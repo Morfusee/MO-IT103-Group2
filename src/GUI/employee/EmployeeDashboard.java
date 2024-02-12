@@ -20,6 +20,7 @@ import com.google.gson.JsonObject;
 
 import Classes.Compensation;
 import Classes.GovernmentIdentification;
+import GUI.LoginPage;
 import UtilityClasses.JsonFileHandler;
 import UtilityClasses.SalaryCalculator;
 
@@ -35,6 +36,7 @@ public class EmployeeDashboard extends JFrame {
 	private javax.swing.JLabel clothingAllowanceLabel;
 	private javax.swing.JLabel clothingAllowanceValue;
 	private javax.swing.JButton computeButton;
+	private javax.swing.JButton logoutButton;
 	private javax.swing.JLabel firstName;
 	private javax.swing.JLabel firstNameValue;
 	private javax.swing.JLabel grossSalaryComputationLabel;
@@ -213,6 +215,7 @@ public class EmployeeDashboard extends JFrame {
 		monthDropdown = new javax.swing.JComboBox<>();
 		computeButton = new javax.swing.JButton();
 		submitLeaveRequestButton = new javax.swing.JButton();
+		logoutButton = new javax.swing.JButton();
 
 		setTitle("MotorPH Payroll System | Full Details of " + employeeGI.getLastName());
 		setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -773,6 +776,61 @@ public class EmployeeDashboard extends JFrame {
 		welcomeLabel.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
 		welcomeLabel.setText("Welcome, " + employeeGI.getLastName() + ".");
 
+//		javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+//		jPanel1.setLayout(jPanel1Layout);
+//		jPanel1Layout.setHorizontalGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+//				.addGroup(jPanel1Layout.createSequentialGroup().addContainerGap(41, Short.MAX_VALUE)
+//						.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+//								.addComponent(welcomeLabel)
+//								.addGroup(jPanel1Layout
+//										.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+//										.addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING,
+//												javax.swing.GroupLayout.PREFERRED_SIZE, 948,
+//												javax.swing.GroupLayout.PREFERRED_SIZE)
+//										.addGroup(jPanel1Layout.createSequentialGroup()
+//												.addComponent(submitLeaveRequestButton,
+//														javax.swing.GroupLayout.PREFERRED_SIZE, 206,
+//														javax.swing.GroupLayout.PREFERRED_SIZE)
+//												.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+//														javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+//												.addComponent(monthDropdown, javax.swing.GroupLayout.PREFERRED_SIZE,
+//														179, javax.swing.GroupLayout.PREFERRED_SIZE)
+//												.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+//												.addComponent(computeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 89,
+//														javax.swing.GroupLayout.PREFERRED_SIZE))))
+//						.addContainerGap(41, Short.MAX_VALUE)));
+//		jPanel1Layout.setVerticalGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+//				.addGroup(jPanel1Layout.createSequentialGroup().addContainerGap(39, Short.MAX_VALUE)
+//						.addComponent(welcomeLabel)
+//						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+//						.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+//								.addComponent(computeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33,
+//										javax.swing.GroupLayout.PREFERRED_SIZE)
+//								.addComponent(monthDropdown, javax.swing.GroupLayout.PREFERRED_SIZE, 33,
+//										javax.swing.GroupLayout.PREFERRED_SIZE)
+//								.addComponent(submitLeaveRequestButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33,
+//										javax.swing.GroupLayout.PREFERRED_SIZE))
+//						.addGap(12, 12, 12).addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 438,
+//								javax.swing.GroupLayout.PREFERRED_SIZE)
+//						.addGap(27, 27, 27)));
+//
+//		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+//		getContentPane().setLayout(layout);
+//		layout.setHorizontalGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addComponent(
+//				jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE));
+//		layout.setVerticalGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+//				.addGroup(layout.createSequentialGroup()
+//						.addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE,
+//								javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+//						.addGap(0, 0, Short.MAX_VALUE)));
+
+		logoutButton.setText("Log Out");
+		logoutButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				logoutButtonActionPerformed(evt);
+			}
+		});
+
 		javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
 		jPanel1.setLayout(jPanel1Layout);
 		jPanel1Layout.setHorizontalGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -795,10 +853,18 @@ public class EmployeeDashboard extends JFrame {
 												.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
 												.addComponent(computeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 89,
 														javax.swing.GroupLayout.PREFERRED_SIZE))))
-						.addContainerGap(41, Short.MAX_VALUE)));
+						.addContainerGap(41, Short.MAX_VALUE))
+				.addGroup(javax.swing.GroupLayout.Alignment.TRAILING,
+						jPanel1Layout.createSequentialGroup()
+								.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+								.addComponent(logoutButton, javax.swing.GroupLayout.PREFERRED_SIZE, 94,
+										javax.swing.GroupLayout.PREFERRED_SIZE)
+								.addContainerGap()));
 		jPanel1Layout.setVerticalGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(jPanel1Layout.createSequentialGroup().addContainerGap(39, Short.MAX_VALUE)
-						.addComponent(welcomeLabel)
+				.addGroup(jPanel1Layout.createSequentialGroup().addContainerGap()
+						.addComponent(logoutButton, javax.swing.GroupLayout.PREFERRED_SIZE, 21,
+								javax.swing.GroupLayout.PREFERRED_SIZE)
+						.addGap(18, 18, Short.MAX_VALUE).addComponent(welcomeLabel)
 						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
 						.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
 								.addComponent(computeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33,
@@ -872,6 +938,17 @@ public class EmployeeDashboard extends JFrame {
 
 		netSalaryValue.setText(numberFormat.format(netSalary));
 
+	}
+
+	private void logoutButtonActionPerformed(java.awt.event.ActionEvent evt) {
+		java.awt.EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				// Remove the EmployeesPage Window
+				dispose();
+
+				new LoginPage().setVisible(true);
+			}
+		});
 	}
 
 	private void backToEmployeeListButtonActionPerformed(java.awt.event.ActionEvent evt) {

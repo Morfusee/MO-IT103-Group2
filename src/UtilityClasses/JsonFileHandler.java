@@ -3,6 +3,7 @@ package UtilityClasses;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -16,9 +17,11 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.JLabel;
+import javax.swing.JTextField;
 
 public class JsonFileHandler {
 
@@ -186,6 +189,20 @@ public class JsonFileHandler {
 		} catch (IOException e) {
 			e.printStackTrace();
 			return new ArrayList<>();
+		}
+	}
+
+	public static void removeJsonObject(JsonArray jsonArray, String key, String value) {
+		Iterator<JsonElement> iterator = jsonArray.iterator();
+		while (iterator.hasNext()) {
+			JsonElement element = iterator.next();
+			if (element.isJsonObject()) {
+				JsonObject jsonObject = element.getAsJsonObject();
+				if (jsonObject.has(key) && jsonObject.get(key).getAsString().equals(value)) {
+					iterator.remove(); // Remove the object from the JsonArray
+					break; // Assuming there is only one object with the specified value
+				}
+			}
 		}
 	}
 }

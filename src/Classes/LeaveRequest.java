@@ -1,8 +1,15 @@
 package Classes;
 
-import com.google.gson.Gson;
+import java.io.IOException;
+import java.util.UUID;
 
-public class LeaveRequest  {
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
+import UtilityClasses.JsonFileHandler;
+
+public class LeaveRequest {
+	private String id;
 	private String employeeNum;
 	private String first_name;
 	private String last_name;
@@ -10,10 +17,11 @@ public class LeaveRequest  {
 	private String endDate;
 	private String notes;
 	private String leave_type;
-	private boolean approved = false;
+	private String approved = "Not Approved Yet.";
 
 	public LeaveRequest(String employeeNum) {
 		this.setEmployeeNum(employeeNum);
+		this.setId(UUID.randomUUID().toString());
 	}
 
 	public String getStartDate() {
@@ -48,11 +56,11 @@ public class LeaveRequest  {
 		this.leave_type = leave_type;
 	}
 
-	public boolean isApproved() {
+	public String isApproved() {
 		return approved;
 	}
 
-	public void setApproved(boolean approved) {
+	public void setApproved(String approved) {
 		this.approved = approved;
 	}
 
@@ -78,5 +86,33 @@ public class LeaveRequest  {
 
 	public void setLast_name(String last_name) {
 		this.last_name = last_name;
+	}
+
+	public static void setLeaveRequestInformationObject(String value, LeaveRequest leaveRequest) throws IOException {
+
+		// Iterate through the JSON file for the employee data
+		JsonObject employeeData = JsonFileHandler.nameIterator(JsonFileHandler.getLeaveRequestJSON(), "id", value);
+
+		// Instantiate Gson to get their Json counterparts
+		Gson gson = new Gson();
+		LeaveRequest leaveRequestInfo = gson.fromJson(employeeData, LeaveRequest.class);
+
+		// Set the employee's identity information
+		leaveRequest.setEmployeeNum(leaveRequestInfo.getEmployeeNum());
+		leaveRequest.setLast_name(leaveRequestInfo.getLast_name());
+		leaveRequest.setFirst_name(leaveRequestInfo.getFirst_name());
+		leaveRequest.setEndDate(leaveRequestInfo.getEndDate());
+		leaveRequest.setStartDate(leaveRequestInfo.getStartDate());
+		leaveRequest.setLeave_type(leaveRequestInfo.getLeave_type());
+		leaveRequest.setNotes(leaveRequestInfo.getNotes());
+		leaveRequest.setApproved(leaveRequestInfo.isApproved());
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 }

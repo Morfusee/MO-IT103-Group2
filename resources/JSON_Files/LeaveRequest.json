@@ -1,0 +1,13 @@
+[
+  {
+    "id": "be077a9e-6bb7-4c3b-9133-c8042fb73ba0",
+    "employeeNum": "10002",
+    "first_name": "Christian",
+    "last_name": "Mata",
+    "startDate": "Thu Feb 22 23:07:02 ULAT 2024",
+    "endDate": "Sat Feb 24 23:07:03 ULAT 2024",
+    "notes": "adasdsadsadsda",
+    "leave_type": "Sick Leave",
+    "approved": "Approved"
+  }
+]

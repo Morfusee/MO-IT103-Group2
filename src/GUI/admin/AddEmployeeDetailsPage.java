@@ -20,7 +20,7 @@ import Classes.Compensation;
 import Classes.GovernmentIdentification;
 import UtilityClasses.JsonFileHandler;
 
-public class UpdateEmployeeDetailsPage extends JFrame {
+public class AddEmployeeDetailsPage extends JFrame {
 
 	// Variables declaration - do not modify
 	private static javax.swing.JTextField addressField;
@@ -31,7 +31,7 @@ public class UpdateEmployeeDetailsPage extends JFrame {
 	private javax.swing.JLabel birthdayLabel;
 	private static javax.swing.JTextField clothingAllowanceField;
 	private javax.swing.JLabel clothingAllowanceLabel;
-	private javax.swing.JTextField employeeNumberField;
+	private static javax.swing.JTextField employeeNumberField;
 	private javax.swing.JLabel employeeNumberLabel;
 	private static javax.swing.JTextField firstNameField;
 	private javax.swing.JLabel firstNameLabel;
@@ -64,17 +64,13 @@ public class UpdateEmployeeDetailsPage extends JFrame {
 	private javax.swing.JLabel statusLabel;
 	private static javax.swing.JTextField tinField;
 	private javax.swing.JLabel tinLabel;
-	private GovernmentIdentification employeeGI;
-	private Compensation employeeComp;
 	// End of variables declaration
 
-	public UpdateEmployeeDetailsPage(GovernmentIdentification employeeGI, Compensation employeeComp) {
-		this.employeeGI = employeeGI;
-		this.employeeComp = employeeComp;
-		initComponents();
+	public AddEmployeeDetailsPage(String employeeNum) {
+		initComponents(employeeNum);
 	}
 
-	private void initComponents() {
+	private void initComponents(String employeeNum) {
 
 		goBackToEmployeeListButton = new javax.swing.JButton();
 		jPanel3 = new javax.swing.JPanel();
@@ -120,7 +116,7 @@ public class UpdateEmployeeDetailsPage extends JFrame {
 
 		setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 		setResizable(false);
-		setTitle("MotorPH Payroll System | Update Employee Details");
+		setTitle("MotorPH Payroll System | Add Employee");
 
 		goBackToEmployeeListButton.setText("Go Back to Employee List");
 		goBackToEmployeeListButton.addActionListener(new java.awt.event.ActionListener() {
@@ -134,26 +130,7 @@ public class UpdateEmployeeDetailsPage extends JFrame {
 			}
 		});
 
-		// Change the value of each corresponding field
-		addressField.setText(employeeGI.getAddress());
-		basicSalaryField.setText(Double.toString(employeeComp.getBasicSalary()));
-		birthdayField.setText(employeeGI.getBirthday());
-		clothingAllowanceField.setText(Double.toString(employeeComp.getClothingAllowance()));
-		employeeNumberField.setText(employeeGI.getEmployeeNumber());
-		firstNameField.setText(employeeGI.getFirstName());
-		grossSemiMonthlyRateField.setText(Double.toString(employeeComp.getGrossSemiMonthlyRate()));
-		hourlyRateField.setText(Double.toString(employeeComp.getHourlyRate()));
-		immediateSupervisorField.setText(employeeGI.getImmediateSupervisor());
-		lastNameField.setText(employeeGI.getLastName());
-		pagibigField.setText(employeeGI.getPagibigNumber());
-		philhealthField.setText(employeeGI.getPhilHealthNumber());
-		phoneAllowanceField.setText(Double.toString(employeeComp.getPhoneAllowance()));
-		phoneNumberField.setText(employeeGI.getPhoneNumber());
-		positionField.setText(employeeGI.getPosition());
-		riceSubsidyField.setText(Double.toString(employeeComp.getRiceSubsidy()));
-		sssField.setText(employeeGI.getSSSNumber());
-		statusField.setText(employeeGI.getStatus());
-		tinField.setText(employeeGI.getTinNumber());
+		employeeNumberField.setText(employeeNum);
 
 		// Set preferred size for all the fields
 		addressField.setPreferredSize(new Dimension(164, 22));
@@ -382,24 +359,21 @@ public class UpdateEmployeeDetailsPage extends JFrame {
 		JsonArray jsonArrayEmployees = JsonFileHandler.getEmployeesJSON();
 		JsonArray jsonArrayLoginCredentials = JsonFileHandler.getLoginCredentialsJSON();
 
-		// Update a specific entry in the Java object
-		String employeeNumToUpdate = employeeNumberField.getText();
-
-		if (!updateEntry(jsonArrayEmployees, employeeNumToUpdate, errorMessage)) {
+		if (!addEmployeeEntry(jsonArrayEmployees, errorMessage)) {
 			errorDialogPane(errorMessage, "Error");
 			return;
 		}
 
-		// Update temporary login credentials
-		updateLoginCredentialsEntry(jsonArrayLoginCredentials, employeeNumToUpdate, employeeNumberField, firstNameField,
+		// Create temporary login credentials
+		addLoginCredentialsEntry(jsonArrayLoginCredentials, employeeNumberField, firstNameField,
 				lastNameField);
 
 		// Convert the Java object back to JSON
-		String updatedJson = jsonArrayEmployees.toString();
+		String updatedJsonEmployees = jsonArrayEmployees.toString();
 		String updatedJsonLoginCredentials = jsonArrayLoginCredentials.toString();
 
 		// Write the updated JSON back to the file
-		JsonFileHandler.writeJsonFile(updatedJson, JsonFileHandler.getEmployeesJsonPath());
+		JsonFileHandler.writeJsonFile(updatedJsonEmployees, JsonFileHandler.getEmployeesJsonPath());
 		JsonFileHandler.writeJsonFile(updatedJsonLoginCredentials, JsonFileHandler.getLoginCredentialsJsonPath());
 
 		// Go back to the employee list page
@@ -414,60 +388,48 @@ public class UpdateEmployeeDetailsPage extends JFrame {
 
 	}
 
-	private static boolean updateEntry(JsonArray jsonArray, String employeeNumToUpdate, StringBuilder errorMessage) {
-		String[] properties = { "last_name", "first_name", "birthday", "address", "phone_number", "SSS", "Philhealth",
-				"TIN", "Pag-ibig", "Status", "Position", "immediate_supervisor", "basic_salary", "rice_subsidy",
-				"phone_allowance", "clothing_allowance", "gross_semi-monthly_rate", "hourly_rate" };
+	private static boolean addEmployeeEntry(JsonArray jsonArray, StringBuilder errorMessage) {
+		String[] properties = { "employeeNum", "last_name", "first_name", "birthday", "address", "phone_number", "SSS",
+				"Philhealth", "TIN", "Pag-ibig", "Status", "Position", "immediate_supervisor", "basic_salary",
+				"rice_subsidy", "phone_allowance", "clothing_allowance", "gross_semi-monthly_rate", "hourly_rate" };
 
-		JTextField[] fields = { lastNameField, firstNameField, birthdayField, addressField, phoneNumberField, sssField,
-				philhealthField, tinField, pagibigField, statusField, positionField, immediateSupervisorField,
-				basicSalaryField, riceSubsidyField, phoneAllowanceField, clothingAllowanceField,
-				grossSemiMonthlyRateField, hourlyRateField };
+		JTextField[] fields = { employeeNumberField, lastNameField, firstNameField, birthdayField, addressField,
+				phoneNumberField, sssField, philhealthField, tinField, pagibigField, statusField, positionField,
+				immediateSupervisorField, basicSalaryField, riceSubsidyField, phoneAllowanceField,
+				clothingAllowanceField, grossSemiMonthlyRateField, hourlyRateField };
 
 		JTextField[] numericFields = { pagibigField, philhealthField, basicSalaryField, riceSubsidyField,
 				phoneAllowanceField, clothingAllowanceField, grossSemiMonthlyRateField, hourlyRateField };
 
-		for (JsonElement element : jsonArray) {
-			if (!element.isJsonObject()) {
-				errorMessage.setLength(0); // Clear previous content
-				errorMessage.append("Data is not a Json Object.");
-				return false;
-			}
-
-			JsonObject employeeObject = element.getAsJsonObject();
-			if (employeeObject.has("employeeNum")
-					&& employeeObject.get("employeeNum").getAsString().equals(employeeNumToUpdate)) {
-
-				// Check if all the fields are filled out
-				if (Arrays.stream(fields).anyMatch(field -> field.getText().trim().isEmpty())) {
-					errorMessage.setLength(0); // Clear previous content
-					errorMessage.append("Please fill in all the fields.");
-					return false;
-				}
-
-				if (Arrays.stream(numericFields).anyMatch(numField -> !isNumeric(numField.getText()))) {
-					errorMessage.setLength(0); // Clear previous content
-					errorMessage.append(
-							"Please enter valid numeric values for those that require it. (e.g. Philhealth, Pag-ibig)");
-					return false;
-				}
-
-				// Update the values for the specified employeeNum
-				for (int i = 0; i < properties.length; i++) {
-					updateProperty(employeeObject, properties[i], fields[i].getText());
-				}
-
-				break; // Break the loop once the entry is updated
-			}
+		// Check if all the fields are filled out
+		if (Arrays.stream(fields).anyMatch(field -> field.getText().trim().isEmpty())) {
+			errorMessage.setLength(0); // Clear previous content
+			errorMessage.append("Please fill in all the fields.");
+			return false;
 		}
+
+		if (Arrays.stream(numericFields).anyMatch(numField -> !isNumeric(numField.getText()))) {
+			errorMessage.setLength(0); // Clear previous content
+			errorMessage
+					.append("Please enter valid numeric values for those that require it. (e.g. Philhealth, Pag-ibig)");
+			return false;
+		}
+
+		// Create a new JsonObject for the new employee
+		JsonObject newEmployee = new JsonObject();
+
+		// Set the properties for the new employee
+		for (int i = 0; i < properties.length; i++) {
+			addEmployees(newEmployee, properties[i], fields[i].getText());
+		}
+
+		// Add the new employee JsonObject to the JsonArray
+		jsonArray.add(newEmployee);
+
 		return true;
 	}
 
-	private static void updateProperty(JsonObject jsonObject, String propertyName, String propertyValue) {
-		if (!jsonObject.has(propertyName)) {
-			return;
-		}
-
+	private static void addEmployees(JsonObject jsonObject, String propertyName, String propertyValue) {
 		switch (propertyName) {
 		case "Philhealth":
 		case "Pag-ibig":
@@ -481,34 +443,27 @@ public class UpdateEmployeeDetailsPage extends JFrame {
 		case "hourly_rate":
 			jsonObject.addProperty(propertyName, Double.parseDouble(propertyValue));
 			break;
+		case "employeeNum":
+			jsonObject.addProperty(propertyName, Integer.parseInt(propertyValue));
+			break;
 		default:
 			jsonObject.addProperty(propertyName, propertyValue);
 			break;
 		}
 	}
+	
+	public static void addLoginCredentialsEntry(JsonArray jsonArray, JTextField employeeNumberField,
+			JTextField firstNameField, JTextField lastNameField) {
 
-	public static void updateLoginCredentialsEntry(JsonArray jsonArray, String employeeNum,
-			JTextField employeeNumberField, JTextField firstNameField, JTextField lastNameField) {
+		// Create a new JsonObject for the new employee
+		JsonObject newEmployee = new JsonObject();
 
-		// Iterate through the array
-		for (JsonElement element : jsonArray) {
-			if (!element.isJsonObject()) {
-				return;
-			}
+		newEmployee.addProperty("employeeNum", Integer.parseInt(employeeNumberField.getText()));
+		newEmployee.addProperty("username", (firstNameField.getText() + "." + lastNameField.getText()).toLowerCase());
+		newEmployee.addProperty("password", "password" + employeeNumberField.getText());
 
-			// Get the target object then modify it
-			JsonObject employeeObject = element.getAsJsonObject();
-			if (employeeObject.has("employeeNum")
-					&& employeeObject.get("employeeNum").getAsString().equals(employeeNum)) {
-
-				employeeObject.addProperty("employeeNum", Integer.parseInt(employeeNumberField.getText()));
-				employeeObject.addProperty("username",
-						(firstNameField.getText() + "." + lastNameField.getText()).toLowerCase());
-				employeeObject.addProperty("password", "password" + employeeNumberField.getText());
-
-				break;
-			}
-		}
+		// Add the new employee JsonObject to the JsonArray
+		jsonArray.add(newEmployee);
 
 	}
 

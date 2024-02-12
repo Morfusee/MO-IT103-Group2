@@ -1,4 +1,4 @@
-package GUI.admin;
+package GUI.employee;
 
 import javax.swing.table.*;
 
@@ -14,6 +14,7 @@ import com.google.gson.stream.JsonWriter;
 import Classes.Compensation;
 import Classes.EmployeeInformation;
 import Classes.GovernmentIdentification;
+import Classes.LeaveRequest;
 import UtilityClasses.JsonFileHandler;
 
 import java.awt.Component;
@@ -23,17 +24,19 @@ import java.awt.event.ActionListener;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Iterator;
 
 import javax.swing.*;
 
 @SuppressWarnings("serial")
-public class EmployeeListPage extends JFrame {
+public class LeaveRequestListEmployeePage extends JFrame {
 
 	private JScrollPane jScrollPane1;
 	private JButton jButton1;
 	private JTable jTable1;
-	private int numberOfColumns = 9;
+	private int numberOfColumns = 5;
 	private JButton addEmployeeButton;
 	private JButton deleteEmployeeButton;
 	private int selectedRow;
@@ -42,8 +45,12 @@ public class EmployeeListPage extends JFrame {
 	// Instantiate two of the user's important information
 	GovernmentIdentification employeeGI;
 	Compensation employeeComp;
+	LeaveRequest leaveRequest;
 
-	public EmployeeListPage() {
+	public LeaveRequestListEmployeePage(GovernmentIdentification employeeGI, Compensation employeeComp)
+			throws ParseException {
+		this.employeeGI = employeeGI;
+		this.employeeComp = employeeComp;
 		initComponents();
 		loadEmployeeData();
 	}
@@ -51,7 +58,7 @@ public class EmployeeListPage extends JFrame {
 	private void initComponents() {
 
 		// Set JFrame
-		setTitle("MotorPH Payroll System | Employee List");
+		setTitle("MotorPH Payroll System | Leave Requests");
 		setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 		setResizable(false);
 
@@ -63,7 +70,7 @@ public class EmployeeListPage extends JFrame {
 
 		// Instantiate Button Component
 		jButton1 = new JButton();
-		jButton1.setText("Go Back to Dashboard");
+		jButton1.setText("Go Back to Leave Request Page");
 		jButton1.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				jButton1ActionPerformed(evt);
@@ -71,8 +78,8 @@ public class EmployeeListPage extends JFrame {
 		});
 
 		// Create an empty default table model
-		DefaultTableModel model = new DefaultTableModel(new Object[][] {}, new String[] { "Employee Number",
-				"Last Name", "First Name", "SSS No.", "PhilHealth No.", "TIN", "Pagibig No.", "", "", "" }) {
+		DefaultTableModel model = new DefaultTableModel(new Object[][] {},
+				new String[] { "ID", "Employee Number", "Start Date", "End Date", "Status", "Leave Type", "" }) {
 			@Override
 			public Class<?> getColumnClass(int columnIndex) {
 				// Return the appropriate class for the last column (column with buttons)
@@ -83,8 +90,7 @@ public class EmployeeListPage extends JFrame {
 			@Override
 			public boolean isCellEditable(int row, int column) {
 				// Allow editing only for the last column
-				return column == getColumnCount() - 1 || column == getColumnCount() - 2
-						|| column == getColumnCount() - 3;
+				return column == getColumnCount() - 1 || column == getColumnCount() - 2;
 			}
 		};
 
@@ -94,35 +100,21 @@ public class EmployeeListPage extends JFrame {
 
 		// Modify the width of the first column
 		TableColumn firstColumn = jTable1.getColumnModel().getColumn(0);
-		firstColumn.setPreferredWidth(90); // Set your preferred width here
+		firstColumn.setMinWidth(0);
+		firstColumn.setMaxWidth(0);
+
+		// Modify the width of the second column
+		TableColumn secondColumn = jTable1.getColumnModel().getColumn(1);
+		secondColumn.setPreferredWidth(90); // Set your preferred width here
 
 		// Modify the width of the last column
 		TableColumn lastColumn = jTable1.getColumnModel().getColumn(numberOfColumns);
 		lastColumn.setPreferredWidth(50); // Set your preferred width here
 
-		// Modify the width of the last column
-		TableColumn editColumn = jTable1.getColumnModel().getColumn(numberOfColumns - 2);
-		editColumn.setPreferredWidth(40); // Set your preferred width here
-
-		// Modify the width of the last column
-		TableColumn deleteColumn = jTable1.getColumnModel().getColumn(numberOfColumns - 1);
-		deleteColumn.setPreferredWidth(100); // Set your preferred width here
-
 		// Set a custom renderer and editor for the Edit Column
 		jTable1.getColumnModel().getColumn(model.getColumnCount() - 1).setCellRenderer(new ButtonRenderer("Delete"));
 		jTable1.getColumnModel().getColumn(model.getColumnCount() - 1)
-				.setCellEditor(new ButtonEditor(0, "Delete", "DeleteDialogPane"));
-
-		// Set a custom renderer and editor for the View Employee column
-		jTable1.getColumnModel().getColumn(model.getColumnCount() - 2)
-				.setCellRenderer(new ButtonRenderer("View Employee"));
-		jTable1.getColumnModel().getColumn(model.getColumnCount() - 2)
-				.setCellEditor(new ButtonEditor(0, "View Employee", "FullEmployeeDetailsPage"));
-
-		// Set a custom renderer and editor for the Edit Column
-		jTable1.getColumnModel().getColumn(model.getColumnCount() - 3).setCellRenderer(new ButtonRenderer("Edit"));
-		jTable1.getColumnModel().getColumn(model.getColumnCount() - 3)
-				.setCellEditor(new ButtonEditor(0, "Edit", "UpdateEmployeeDetailsPage"));
+				.setCellEditor(new ButtonEditor(1, "Delete", "DeleteDialogPane"));
 
 		// Set custom renderer for the header cells to make them bold
 		JTableHeader header = jTable1.getTableHeader();
@@ -130,29 +122,21 @@ public class EmployeeListPage extends JFrame {
 
 		jScrollPane1 = new JScrollPane(jTable1);
 
-		addEmployeeButton.setText("Add Employee");
-		addEmployeeButton.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				addEmployeeButtonActionPerformed(evt);
-			}
-		});
-
 		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
 		getContentPane().setLayout(layout);
 		layout.setHorizontalGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 				.addGroup(layout.createSequentialGroup().addContainerGap()
 						.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 								.addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 996, Short.MAX_VALUE)
-								.addGroup(layout.createSequentialGroup().addComponent(jButton1)
-										.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED,
-												javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-										.addComponent(addEmployeeButton)))
-						.addContainerGap()));
+								.addGroup(layout.createSequentialGroup().addComponent(jButton1).addPreferredGap(
+										javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+										javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+						.addContainerGap(13, Short.MAX_VALUE)));
 		layout.setVerticalGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addGroup(
 				javax.swing.GroupLayout.Alignment.TRAILING,
 				layout.createSequentialGroup().addContainerGap(13, Short.MAX_VALUE)
 						.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-								.addComponent(jButton1).addComponent(addEmployeeButton))
+								.addComponent(jButton1))
 						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
 						.addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 428,
 								javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -164,28 +148,51 @@ public class EmployeeListPage extends JFrame {
 		setLocationRelativeTo(null);
 	}
 
-	private void loadEmployeeData() {
+	private void loadEmployeeData() throws ParseException {
 		try {
 			// Read the JSON file and parse it using GSON
-			FileReader reader = new FileReader(JsonFileHandler.getEmployeesJsonPath());
-			JsonArray jsonArray = JsonParser.parseReader(reader).getAsJsonArray();
+			FileReader reader = new FileReader(JsonFileHandler.getLeaveRequestJsonPath());
+			JsonElement jsonElement = JsonParser.parseReader(reader);
+
+			// Check if the parsed JSON is an array
+			if (!jsonElement.isJsonArray()) {
+				return;
+			}
+
+			JsonArray jsonArray = jsonElement.getAsJsonArray();
+
+			// Check if the JSON array is empty
+			if (jsonArray.size() == 0) {
+				// Handle the case when the array is empty by creating an empty JSON array
+				jsonArray = new JsonArray();
+			}
 
 			// Iterate through the JSON array and add data to the table model
 			DefaultTableModel model = (DefaultTableModel) ((JTable) jScrollPane1.getViewport().getView()).getModel();
 			Gson gson = new Gson();
 
 			// Auto increment employeeNum for record creation
-			employeeNum = String
-					.valueOf(jsonArray.get(jsonArray.size() - 1).getAsJsonObject().get("employeeNum").getAsInt() + 1);
+			employeeNum = String.valueOf(jsonArray.size() > 0
+					? jsonArray.get(jsonArray.size() - 1).getAsJsonObject().get("employeeNum").getAsInt() + 1
+					: 1);
 
 			for (int i = 0; i < jsonArray.size(); i++) {
 				JsonObject jsonObject = jsonArray.get(i).getAsJsonObject();
-				GovernmentIdentification employee = gson.fromJson(jsonObject, GovernmentIdentification.class);
+				LeaveRequest leaveRequests = gson.fromJson(jsonObject, LeaveRequest.class);
 
-				// Add the data to the table model
-				model.addRow(new Object[] { employee.getEmployeeNumber(), employee.getLastName(),
-						employee.getFirstName(), employee.getSSSNumber(), employee.getPhilHealthNumber(),
-						employee.getTinNumber(), employee.getPagibigNumber(), "View" });
+				if (jsonObject.get("employeeNum").getAsString().equals(employeeGI.getEmployeeNumber())) {
+					String formattedStartDate = new SimpleDateFormat("EEE MMM dd, yyyy").format(
+							new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy").parse(leaveRequests.getStartDate()));
+
+					String formattedEndDate = new SimpleDateFormat("EEE MMM dd, yyyy").format(
+							new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy").parse(leaveRequests.getEndDate()));
+
+					// Add the data to the table model
+					model.addRow(new Object[] { leaveRequests.getId(), leaveRequests.getEmployeeNum(),
+							formattedStartDate, formattedEndDate, leaveRequests.isApproved(),
+							leaveRequests.getLeave_type(), "View", "View" });
+				}
+
 			}
 
 		} catch (IOException e) {
@@ -193,27 +200,15 @@ public class EmployeeListPage extends JFrame {
 		}
 	}
 
-	// Click event of Go Back to Dashboard Button
+	// Click event of Go Back to leave request page Button
 	private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			public void run() {
-				// Remove the EmployeesPage Window
+				// Remove the leave request list Window
 				dispose();
 
-				// Go back to the dashboard page
-				new DashboardPage().setVisible(true);
-			}
-		});
-	}
-
-	private void addEmployeeButtonActionPerformed(java.awt.event.ActionEvent evt) {
-		java.awt.EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				// Close the employee list
-				dispose();
-
-				// Refresh the Employees Page
-				new AddEmployeeDetailsPage(employeeNum).setVisible(true);
+				// Go back to the leave request page
+				new LeaveRequestPage(employeeGI, employeeComp).setVisible(true);
 			}
 		});
 	}
@@ -225,7 +220,7 @@ public class EmployeeListPage extends JFrame {
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
 		// Remove the object
-		JsonFileHandler.removeJsonObject(jsonArray, "employeeNum", employeeNumToRemove);
+		JsonFileHandler.removeJsonObject(jsonArray, "id", employeeNumToRemove);
 
 		// Write the modified JsonArray back to the JSON file
 		JsonFileHandler.writeJsonFile(gson.toJson(jsonArray), JsonFileHandler.getEmployeesJsonPath());
@@ -236,24 +231,28 @@ public class EmployeeListPage extends JFrame {
 				dispose();
 
 				// Refresh the Employees Page
-				new EmployeeListPage().setVisible(true);
+				try {
+					new LeaveRequestListEmployeePage(employeeGI, employeeComp).setVisible(true);
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
 
 	}
 
-	private void deleteLoginCredentials(String employeeNumToRemove) throws IOException {
-		JsonArray jsonArray = JsonFileHandler.getLoginCredentialsJSON();
+	private void deleteLeaveEntry(String value) throws IOException {
+		JsonArray jsonArray = JsonFileHandler.getLeaveRequestJSON();
 
 		// Instantiate gson class
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
 		// Remove the object
-		JsonFileHandler.removeJsonObject(jsonArray, "employeeNum", employeeNumToRemove);
+		JsonFileHandler.removeJsonObject(jsonArray, "id", value);
 
 		// Write the modified JsonArray back to the JSON file
-		JsonFileHandler.writeJsonFile(gson.toJson(jsonArray), JsonFileHandler.getLoginCredentialsJsonPath());
-
+		JsonFileHandler.writeJsonFile(gson.toJson(jsonArray), JsonFileHandler.getLeaveRequestJsonPath());
 	}
 
 	// Custom on-render look for the button column
@@ -293,13 +292,10 @@ public class EmployeeListPage extends JFrame {
 
 							// Check what page to go to
 							switch (page) {
-							case "FullEmployeeDetailsPage":
+							case "LeaveRequestDetailsPage":
 								// Go to the employees information page
-								new FullEmployeeDetailsPage(employeeGI, employeeComp).setVisible(true);
-								break;
-							case "UpdateEmployeeDetailsPage":
-								// Go to the employees information page
-								new UpdateEmployeeDetailsPage(employeeGI, employeeComp).setVisible(true);
+								new LeaveRequestDetailsEmployeePage(employeeGI, employeeComp, leaveRequest)
+										.setVisible(true);
 								break;
 							case "DeleteDialogPane":
 								// Display a confirmation dialog
@@ -309,10 +305,16 @@ public class EmployeeListPage extends JFrame {
 								// Check the user's choice
 								if (result == JOptionPane.YES_OPTION) {
 									try {
-										deleteLoginCredentials(
-												jTable1.getValueAt(selectedRow, targetColumn).toString());
-										deleteEmployeeButtonActionPerformed(
-												jTable1.getValueAt(selectedRow, targetColumn).toString());
+										deleteLeaveEntry(jTable1.getValueAt(selectedRow, targetColumn - 1).toString());
+
+										dispose();
+
+										try {
+											new LeaveRequestListEmployeePage(employeeGI, employeeComp).setVisible(true);
+										} catch (ParseException e) {
+											// TODO Auto-generated catch block
+											e.printStackTrace();
+										}
 									} catch (IOException e) {
 										// TODO Auto-generated catch block
 										e.printStackTrace();
@@ -320,7 +322,6 @@ public class EmployeeListPage extends JFrame {
 								}
 								break;
 							default:
-								new FullEmployeeDetailsPage(employeeGI, employeeComp).setVisible(true);
 								break;
 							}
 
@@ -337,6 +338,7 @@ public class EmployeeListPage extends JFrame {
 			// Call constructor
 			employeeGI = new GovernmentIdentification(jTable1.getValueAt(row, targetColumn).toString());
 			employeeComp = new Compensation(jTable1.getValueAt(row, targetColumn).toString());
+			leaveRequest = new LeaveRequest(jTable1.getValueAt(row, targetColumn).toString());
 
 			selectedRow = row;
 
@@ -344,6 +346,8 @@ public class EmployeeListPage extends JFrame {
 			try {
 				EmployeeInformation.setEmployeeInformationObject(jTable1.getValueAt(row, targetColumn).toString(),
 						employeeGI, employeeComp);
+				LeaveRequest.setLeaveRequestInformationObject(jTable1.getValueAt(row, targetColumn - 1).toString(),
+						leaveRequest);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
