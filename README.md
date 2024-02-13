@@ -1,6 +1,6 @@
 # MotorPH Employee Portal
 
-An employee portal for MotorPH made by **Group 2**. This project took **one and a half months** to accomplish. 
+An employee portal for MotorPH made by **Group 2**.
 
 ## How do I obtain the program for checking?
 
@@ -12,7 +12,7 @@ To build the program yourself (For Eclipse IDE users only):
 
 1. Click on the "Code" button in green, then copy the hyperlink 
 
-2. Open Eclipse and go to File > Import in eclipse
+2. Open Eclipse and go to File > Import in Eclipse
 
 3. A window will appear. Under the Git folder, select the option "**Projects from Git (with smart import)**."
 
@@ -36,9 +36,7 @@ Username: admin
 Password: 123
 ```
 
-You can also use an employee's `last name` as the username, and their `employee #` as the password.
-
-Navigate this [Google Sheet](https://docs.google.com/spreadsheets/d/1hEutTTQ_ekhL4EHQb0IpFjjEWZVMSNq4GxZHrawqwHY/edit?usp=sharing) file to get a better view of each employee's login credentials.
+You can also check the LoginCredentials.json file to obtain each employee's login credentials.
 
 
 
