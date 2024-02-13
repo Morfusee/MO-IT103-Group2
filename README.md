@@ -26,6 +26,7 @@ To build the program yourself (For Eclipse IDE users only):
 
 8. Select the **Import Source**. The wizard will analyze the content of the folder to find the project and import them into the IDE.
 
+9. Finally, right-click the project. Choose **Run As**, then **Java Application**. You will be shown a list of applications to run, choose **Main - (default package)**.
 
 ## What login credentials should I use?
 
