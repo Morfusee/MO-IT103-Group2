@@ -9,5 +9,27 @@
     "notes": "adasdsadsadsda",
     "leave_type": "Sick Leave",
     "approved": "Approved"
+  },
+  {
+    "id": "3c6b5aa4-496c-448d-9f8c-2daec0f47dba",
+    "employeeNum": "10002",
+    "first_name": "Christian",
+    "last_name": "Mata",
+    "startDate": "Tue Feb 27 17:45:37 ULAT 2024",
+    "endDate": "Thu Feb 29 17:45:38 ULAT 2024",
+    "notes": "",
+    "leave_type": "Vacation Leave",
+    "approved": "Approved"
+  },
+  {
+    "id": "8195bfdb-2da7-49f8-a830-ad35e9e136ae",
+    "employeeNum": "10002",
+    "first_name": "Christian",
+    "last_name": "Mata",
+    "startDate": "Sun Feb 04 17:45:57 ULAT 2024",
+    "endDate": "Thu Feb 29 17:45:59 ULAT 2024",
+    "notes": "",
+    "leave_type": "Emergency Leave",
+    "approved": "Approved"
   }
 ]

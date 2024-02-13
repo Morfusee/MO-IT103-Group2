@@ -31,10 +31,10 @@ import java.util.Iterator;
 import javax.swing.*;
 
 @SuppressWarnings("serial")
-public class LeaveRequestListEmployeePage extends JFrame {
+public class EmployeeLeaveRequestListPage extends JFrame {
 
 	private JScrollPane jScrollPane1;
-	private JButton jButton1;
+	private JButton goBackButton;
 	private JTable jTable1;
 	private int numberOfColumns = 5;
 	private JButton addEmployeeButton;
@@ -47,7 +47,7 @@ public class LeaveRequestListEmployeePage extends JFrame {
 	Compensation employeeComp;
 	LeaveRequest leaveRequest;
 
-	public LeaveRequestListEmployeePage(GovernmentIdentification employeeGI, Compensation employeeComp)
+	public EmployeeLeaveRequestListPage(GovernmentIdentification employeeGI, Compensation employeeComp)
 			throws ParseException {
 		this.employeeGI = employeeGI;
 		this.employeeComp = employeeComp;
@@ -69,11 +69,11 @@ public class LeaveRequestListEmployeePage extends JFrame {
 		deleteEmployeeButton = new JButton();
 
 		// Instantiate Button Component
-		jButton1 = new JButton();
-		jButton1.setText("Go Back to Leave Request Page");
-		jButton1.addActionListener(new java.awt.event.ActionListener() {
+		goBackButton = new JButton();
+		goBackButton.setText("Go Back to Leave Request Page");
+		goBackButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				jButton1ActionPerformed(evt);
+				goBackButtonActionPerformed(evt);
 			}
 		});
 
@@ -90,7 +90,7 @@ public class LeaveRequestListEmployeePage extends JFrame {
 			@Override
 			public boolean isCellEditable(int row, int column) {
 				// Allow editing only for the last column
-				return column == getColumnCount() - 1 || column == getColumnCount() - 2;
+				return column == getColumnCount() - 1;
 			}
 		};
 
@@ -128,7 +128,7 @@ public class LeaveRequestListEmployeePage extends JFrame {
 				.addGroup(layout.createSequentialGroup().addContainerGap()
 						.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 								.addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 996, Short.MAX_VALUE)
-								.addGroup(layout.createSequentialGroup().addComponent(jButton1).addPreferredGap(
+								.addGroup(layout.createSequentialGroup().addComponent(goBackButton).addPreferredGap(
 										javax.swing.LayoutStyle.ComponentPlacement.RELATED,
 										javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
 						.addContainerGap(13, Short.MAX_VALUE)));
@@ -136,7 +136,7 @@ public class LeaveRequestListEmployeePage extends JFrame {
 				javax.swing.GroupLayout.Alignment.TRAILING,
 				layout.createSequentialGroup().addContainerGap(13, Short.MAX_VALUE)
 						.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-								.addComponent(jButton1))
+								.addComponent(goBackButton))
 						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
 						.addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 428,
 								javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -176,11 +176,15 @@ public class LeaveRequestListEmployeePage extends JFrame {
 					? jsonArray.get(jsonArray.size() - 1).getAsJsonObject().get("employeeNum").getAsInt() + 1
 					: 1);
 
+			// Loop through the JSON array
 			for (int i = 0; i < jsonArray.size(); i++) {
 				JsonObject jsonObject = jsonArray.get(i).getAsJsonObject();
 				LeaveRequest leaveRequests = gson.fromJson(jsonObject, LeaveRequest.class);
 
+				// Only show records that belong to this employee
 				if (jsonObject.get("employeeNum").getAsString().equals(employeeGI.getEmployeeNumber())) {
+
+					// Format the start date so it doesn't show the time
 					String formattedStartDate = new SimpleDateFormat("EEE MMM dd, yyyy").format(
 							new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy").parse(leaveRequests.getStartDate()));
 
@@ -201,7 +205,7 @@ public class LeaveRequestListEmployeePage extends JFrame {
 	}
 
 	// Click event of Go Back to leave request page Button
-	private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
+	private void goBackButtonActionPerformed(java.awt.event.ActionEvent evt) {
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				// Remove the leave request list Window
@@ -211,35 +215,6 @@ public class LeaveRequestListEmployeePage extends JFrame {
 				new LeaveRequestPage(employeeGI, employeeComp).setVisible(true);
 			}
 		});
-	}
-
-	private void deleteEmployeeButtonActionPerformed(String employeeNumToRemove) throws IOException {
-		JsonArray jsonArray = JsonFileHandler.getEmployeesJSON();
-
-		// Instantiate gson class
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
-		// Remove the object
-		JsonFileHandler.removeJsonObject(jsonArray, "id", employeeNumToRemove);
-
-		// Write the modified JsonArray back to the JSON file
-		JsonFileHandler.writeJsonFile(gson.toJson(jsonArray), JsonFileHandler.getEmployeesJsonPath());
-
-		java.awt.EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				// Remove the EmployeesPage Window
-				dispose();
-
-				// Refresh the Employees Page
-				try {
-					new LeaveRequestListEmployeePage(employeeGI, employeeComp).setVisible(true);
-				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		});
-
 	}
 
 	private void deleteLeaveEntry(String value) throws IOException {
@@ -292,11 +267,6 @@ public class LeaveRequestListEmployeePage extends JFrame {
 
 							// Check what page to go to
 							switch (page) {
-							case "LeaveRequestDetailsPage":
-								// Go to the employees information page
-								new LeaveRequestDetailsEmployeePage(employeeGI, employeeComp, leaveRequest)
-										.setVisible(true);
-								break;
 							case "DeleteDialogPane":
 								// Display a confirmation dialog
 								int result = JOptionPane.showConfirmDialog(null, "Do you want to proceed?",
@@ -305,19 +275,12 @@ public class LeaveRequestListEmployeePage extends JFrame {
 								// Check the user's choice
 								if (result == JOptionPane.YES_OPTION) {
 									try {
-										deleteLeaveEntry(jTable1.getValueAt(selectedRow, targetColumn - 1).toString());
-
+										performDeleteOperation(targetColumn);
 										dispose();
-
-										try {
-											new LeaveRequestListEmployeePage(employeeGI, employeeComp).setVisible(true);
-										} catch (ParseException e) {
-											// TODO Auto-generated catch block
-											e.printStackTrace();
-										}
-									} catch (IOException e) {
-										// TODO Auto-generated catch block
+										navigateToLeaveRequestListPage();
+									} catch (IOException | ParseException e) {
 										e.printStackTrace();
+										// Handle or log the exception as needed
 									}
 								}
 								break;
@@ -385,5 +348,13 @@ public class LeaveRequestListEmployeePage extends JFrame {
 
 			return c;
 		}
+	}
+
+	private void performDeleteOperation(int targetColumn) throws IOException {
+		deleteLeaveEntry(jTable1.getValueAt(selectedRow, targetColumn - 1).toString());
+	}
+
+	private void navigateToLeaveRequestListPage() throws ParseException {
+		new EmployeeLeaveRequestListPage(employeeGI, employeeComp).setVisible(true);
 	}
 }

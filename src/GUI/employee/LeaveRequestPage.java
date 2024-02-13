@@ -197,7 +197,7 @@ public class LeaveRequestPage extends JFrame {
 				dispose();
 
 				try {
-					new LeaveRequestListEmployeePage(employeeGI, employeeComp).setVisible(true);
+					new EmployeeLeaveRequestListPage(employeeGI, employeeComp).setVisible(true);
 				} catch (ParseException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

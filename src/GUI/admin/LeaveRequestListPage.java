@@ -15,7 +15,7 @@ import Classes.Compensation;
 import Classes.EmployeeInformation;
 import Classes.GovernmentIdentification;
 import Classes.LeaveRequest;
-import GUI.employee.LeaveRequestListEmployeePage;
+import GUI.employee.EmployeeLeaveRequestListPage;
 import UtilityClasses.JsonFileHandler;
 
 import java.awt.Component;
@@ -35,7 +35,7 @@ import javax.swing.*;
 public class LeaveRequestListPage extends JFrame {
 
 	private JScrollPane jScrollPane1;
-	private JButton jButton1;
+	private JButton goBackButton;
 	private JTable jTable1;
 	private int numberOfColumns = 9;
 	private JButton addEmployeeButton;
@@ -69,11 +69,11 @@ public class LeaveRequestListPage extends JFrame {
 		deleteEmployeeButton = new JButton();
 
 		// Instantiate Button Component
-		jButton1 = new JButton();
-		jButton1.setText("Go Back to Dashboard");
-		jButton1.addActionListener(new java.awt.event.ActionListener() {
+		goBackButton = new JButton();
+		goBackButton.setText("Go Back to Dashboard");
+		goBackButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				jButton1ActionPerformed(evt);
+				goBackButtonActionPerformed(evt);
 			}
 		});
 
@@ -138,7 +138,7 @@ public class LeaveRequestListPage extends JFrame {
 				.addGroup(layout.createSequentialGroup().addContainerGap()
 						.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 								.addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 996, Short.MAX_VALUE)
-								.addGroup(layout.createSequentialGroup().addComponent(jButton1).addPreferredGap(
+								.addGroup(layout.createSequentialGroup().addComponent(goBackButton).addPreferredGap(
 										javax.swing.LayoutStyle.ComponentPlacement.RELATED,
 										javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
 						.addContainerGap(13, Short.MAX_VALUE)));
@@ -146,7 +146,7 @@ public class LeaveRequestListPage extends JFrame {
 				javax.swing.GroupLayout.Alignment.TRAILING,
 				layout.createSequentialGroup().addContainerGap(13, Short.MAX_VALUE)
 						.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-								.addComponent(jButton1))
+								.addComponent(goBackButton))
 						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
 						.addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 428,
 								javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -186,10 +186,12 @@ public class LeaveRequestListPage extends JFrame {
 					? jsonArray.get(jsonArray.size() - 1).getAsJsonObject().get("employeeNum").getAsInt() + 1
 					: 1);
 
+			// Loop through the JSON array
 			for (int i = 0; i < jsonArray.size(); i++) {
 				JsonObject jsonObject = jsonArray.get(i).getAsJsonObject();
 				LeaveRequest leaveRequests = gson.fromJson(jsonObject, LeaveRequest.class);
 
+				// Format the start date so it doesn't show the time
 				String formattedStartDate = new SimpleDateFormat("EEE MMM dd, yyyy").format(
 						new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy").parse(leaveRequests.getStartDate()));
 
@@ -208,7 +210,7 @@ public class LeaveRequestListPage extends JFrame {
 	}
 
 	// Click event of Go Back to Dashboard Button
-	private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
+	private void goBackButtonActionPerformed(java.awt.event.ActionEvent evt) {
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				// Remove the EmployeesPage Window
@@ -220,42 +222,17 @@ public class LeaveRequestListPage extends JFrame {
 		});
 	}
 
-	private void deleteEmployeeButtonActionPerformed(String employeeNumToRemove) throws IOException {
-		JsonArray jsonArray = JsonFileHandler.getEmployeesJSON();
+	private void deleteLeaveEntry(String value) throws IOException {
+		JsonArray jsonArray = JsonFileHandler.getLeaveRequestJSON();
 
 		// Instantiate gson class
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
 		// Remove the object
-		JsonFileHandler.removeJsonObject(jsonArray, "employeeNum", employeeNumToRemove);
+		JsonFileHandler.removeJsonObject(jsonArray, "id", value);
 
 		// Write the modified JsonArray back to the JSON file
-		JsonFileHandler.writeJsonFile(gson.toJson(jsonArray), JsonFileHandler.getEmployeesJsonPath());
-
-		java.awt.EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				// Remove the EmployeesPage Window
-				dispose();
-
-				// Refresh the Employees Page
-				new EmployeeListPage().setVisible(true);
-			}
-		});
-
-	}
-
-	private void deleteLoginCredentials(String employeeNumToRemove) throws IOException {
-		JsonArray jsonArray = JsonFileHandler.getLoginCredentialsJSON();
-
-		// Instantiate gson class
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
-		// Remove the object
-		JsonFileHandler.removeJsonObject(jsonArray, "employeeNum", employeeNumToRemove);
-
-		// Write the modified JsonArray back to the JSON file
-		JsonFileHandler.writeJsonFile(gson.toJson(jsonArray), JsonFileHandler.getLoginCredentialsJsonPath());
-
+		JsonFileHandler.writeJsonFile(gson.toJson(jsonArray), JsonFileHandler.getLeaveRequestJsonPath());
 	}
 
 	// Custom on-render look for the button column
@@ -315,17 +292,10 @@ public class LeaveRequestListPage extends JFrame {
 								// Check the user's choice
 								if (result == JOptionPane.YES_OPTION) {
 									try {
-										deleteLeaveEntry(jTable1.getValueAt(selectedRow, targetColumn - 1).toString());
-
+										performDeleteOperation(targetColumn);
 										dispose();
-
-										try {
-											new LeaveRequestListPage(employeeGI, employeeComp).setVisible(true);
-										} catch (ParseException e) {
-											// TODO Auto-generated catch block
-											e.printStackTrace();
-										}
-									} catch (IOException e) {
+										navigateToLeaveRequestListPage();
+									} catch (IOException | ParseException e) {
 										// TODO Auto-generated catch block
 										e.printStackTrace();
 									}
@@ -396,16 +366,11 @@ public class LeaveRequestListPage extends JFrame {
 		}
 	}
 
-	private void deleteLeaveEntry(String value) throws IOException {
-		JsonArray jsonArray = JsonFileHandler.getLeaveRequestJSON();
+	private void performDeleteOperation(int targetColumn) throws IOException {
+		deleteLeaveEntry(jTable1.getValueAt(selectedRow, targetColumn - 1).toString());
+	}
 
-		// Instantiate gson class
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
-		// Remove the object
-		JsonFileHandler.removeJsonObject(jsonArray, "id", value);
-
-		// Write the modified JsonArray back to the JSON file
-		JsonFileHandler.writeJsonFile(gson.toJson(jsonArray), JsonFileHandler.getLeaveRequestJsonPath());
+	private void navigateToLeaveRequestListPage() throws ParseException {
+		new LeaveRequestListPage(employeeGI, employeeComp).setVisible(true);
 	}
 }
