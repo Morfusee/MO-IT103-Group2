@@ -10,7 +10,7 @@ You can run and [Build](#build) the program through an IDE.
 
 To build the program yourself (For Eclipse IDE users only):
 
-1. Click on the "Code" button in green, then copy the hyperlink 
+1. Click on the "Code" button in green above this ReadMe, then copy the hyperlink 
 
 2. Open Eclipse and go to File > Import in Eclipse
 
