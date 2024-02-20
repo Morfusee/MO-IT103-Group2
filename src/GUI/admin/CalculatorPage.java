@@ -457,18 +457,31 @@ public class CalculatorPage extends JFrame {
 				.addContainerGap(36, Short.MAX_VALUE)));
 
 		pack();
-		
+
 		// Must be called after setting pack
 		setLocationRelativeTo(null);
 	}
 
 	private void hoursRenderedFieldActionPerformed(java.awt.event.ActionEvent evt, Compensation employeeComp) {
-		// TODO add your handling code here:
+		// Exit if the value is not of double type
+		if (!isNumeric(hoursRenderedField.getText())) {
+			JOptionPane.showMessageDialog(new JFrame(""), "Please provide a valid input.", "Invalid Input",
+					JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
 		setDataOnEvent(employeeComp);
 	}
 
 	private void calculateSalaryButtonActionPerformed(java.awt.event.ActionEvent evt, Compensation employeeComp) {
-		// TODO add your handling code here:
+
+		// Exit if the value is not of double type
+		if (!isNumeric(hoursRenderedField.getText())) {
+			JOptionPane.showMessageDialog(new JFrame(""), "Please provide a valid input.", "Invalid Input",
+					JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+
 		setDataOnEvent(employeeComp);
 	}
 
@@ -539,5 +552,15 @@ public class CalculatorPage extends JFrame {
 		totalAllowance = phoneAllowance + riceSubsidy + clothingAllowance;
 		totalAllowanceValue.setText(Double.toString(totalAllowance));
 		totalAllowanceValue1.setText(Double.toString(totalAllowance)); // Duplicate label
+	}
+
+	private static boolean isNumeric(String str) {
+		try {
+			// Attempt to parse the input as a number
+			Double.parseDouble(str);
+			return true;
+		} catch (NumberFormatException e) {
+			return false;
+		}
 	}
 }
