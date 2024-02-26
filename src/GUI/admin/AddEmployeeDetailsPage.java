@@ -1,6 +1,8 @@
 package GUI.admin;
 
 import java.awt.Dimension;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -9,6 +11,8 @@ import java.util.Arrays;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -18,6 +22,8 @@ import com.google.gson.JsonParser;
 
 import Classes.Compensation;
 import Classes.GovernmentIdentification;
+import UtilityClasses.CustomTooltip;
+import UtilityClasses.DataValidators;
 import UtilityClasses.JsonFileHandler;
 
 public class AddEmployeeDetailsPage extends JFrame {
@@ -211,6 +217,154 @@ public class AddEmployeeDetailsPage extends JFrame {
 		clothingAllowanceLabel.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
 		clothingAllowanceLabel.setText("Clothing Allowance");
 
+		/*************************/
+		/* Custom tooltip events */
+		/*************************/
+
+		// Phone number tooltip
+		String phoneNumberTooltip = "Accepted format: xxx-xxx-xxx";
+
+		phoneNumberField.addCaretListener(new CaretListener() {
+			@Override
+			public void caretUpdate(CaretEvent e) {
+				CustomTooltip.showCustomTooltip(phoneNumberField, phoneNumberTooltip);
+			}
+		});
+
+		phoneNumberField.addFocusListener(new FocusListener() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				// Show the tooltip when the component gains focus
+				CustomTooltip.showCustomTooltip(phoneNumberField, phoneNumberTooltip);
+			}
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				// Hide the tooltip when the component loses focus
+				CustomTooltip.hideCustomTooltip();
+			}
+		});
+
+		// SSS tooltip
+		String sssTooltip = "Accepted format: xx-xxxxxxx-x";
+
+		sssField.addCaretListener(new CaretListener() {
+			@Override
+			public void caretUpdate(CaretEvent e) {
+				CustomTooltip.showCustomTooltip(sssField, sssTooltip);
+			}
+		});
+
+		sssField.addFocusListener(new FocusListener() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				// Show the tooltip when the component gains focus
+				CustomTooltip.showCustomTooltip(sssField, sssTooltip);
+			}
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				// Hide the tooltip when the component loses focus
+				CustomTooltip.hideCustomTooltip();
+			}
+		});
+
+		// PhilHealth tooltip
+		String philhealthTooltip = "Max Length: 12";
+
+		philhealthField.addCaretListener(new CaretListener() {
+			@Override
+			public void caretUpdate(CaretEvent e) {
+				CustomTooltip.showCustomTooltip(philhealthField, philhealthTooltip);
+			}
+		});
+
+		philhealthField.addFocusListener(new FocusListener() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				// Show the tooltip when the component gains focus
+				CustomTooltip.showCustomTooltip(philhealthField, philhealthTooltip);
+			}
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				// Hide the tooltip when the component loses focus
+				CustomTooltip.hideCustomTooltip();
+			}
+		});
+
+		// TIN tooltip
+		String tinTooltip = "Accepted format: xxx-xxx-xxx-xxx";
+
+		tinField.addCaretListener(new CaretListener() {
+			@Override
+			public void caretUpdate(CaretEvent e) {
+				CustomTooltip.showCustomTooltip(tinField, tinTooltip);
+			}
+		});
+
+		tinField.addFocusListener(new FocusListener() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				// Show the tooltip when the component gains focus
+				CustomTooltip.showCustomTooltip(tinField, tinTooltip);
+			}
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				// Hide the tooltip when the component loses focus
+				CustomTooltip.hideCustomTooltip();
+			}
+		});
+
+		// Pagibig tooltip
+		String pagibigTooltip = "Max Length: 12";
+
+		pagibigField.addCaretListener(new CaretListener() {
+			@Override
+			public void caretUpdate(CaretEvent e) {
+				CustomTooltip.showCustomTooltip(pagibigField, pagibigTooltip);
+			}
+		});
+
+		pagibigField.addFocusListener(new FocusListener() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				// Show the tooltip when the component gains focus
+				CustomTooltip.showCustomTooltip(pagibigField, pagibigTooltip);
+			}
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				// Hide the tooltip when the component loses focus
+				CustomTooltip.hideCustomTooltip();
+			}
+		});
+
+		// Birthday tooltip
+		String birthdayTooltip = "Accepted format: MM/dd/yyyy";
+
+		birthdayField.addCaretListener(new CaretListener() {
+			@Override
+			public void caretUpdate(CaretEvent e) {
+				CustomTooltip.showCustomTooltip(birthdayField, birthdayTooltip);
+			}
+		});
+
+		birthdayField.addFocusListener(new FocusListener() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				// Show the tooltip when the component gains focus
+				CustomTooltip.showCustomTooltip(birthdayField, birthdayTooltip);
+			}
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				// Hide the tooltip when the component loses focus
+				CustomTooltip.hideCustomTooltip();
+			}
+		});
+
 		javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
 		jPanel3.setLayout(jPanel3Layout);
 		jPanel3Layout.setHorizontalGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -365,8 +519,7 @@ public class AddEmployeeDetailsPage extends JFrame {
 		}
 
 		// Create temporary login credentials
-		addLoginCredentialsEntry(jsonArrayLoginCredentials, employeeNumberField, firstNameField,
-				lastNameField);
+		addLoginCredentialsEntry(jsonArrayLoginCredentials, employeeNumberField, firstNameField, lastNameField);
 
 		// Convert the Java object back to JSON
 		String updatedJsonEmployees = jsonArrayEmployees.toString();
@@ -398,6 +551,10 @@ public class AddEmployeeDetailsPage extends JFrame {
 				immediateSupervisorField, basicSalaryField, riceSubsidyField, phoneAllowanceField,
 				clothingAllowanceField, grossSemiMonthlyRateField, hourlyRateField };
 
+		// Maintain a new array to validate user input
+		JTextField[] stringOnlyFields = { lastNameField, firstNameField, positionField, immediateSupervisorField,
+				statusField };
+
 		JTextField[] numericFields = { pagibigField, philhealthField, basicSalaryField, riceSubsidyField,
 				phoneAllowanceField, clothingAllowanceField, grossSemiMonthlyRateField, hourlyRateField };
 
@@ -408,10 +565,33 @@ public class AddEmployeeDetailsPage extends JFrame {
 			return false;
 		}
 
-		if (Arrays.stream(numericFields).anyMatch(numField -> !isNumeric(numField.getText()))) {
+		if (Arrays.stream(numericFields).anyMatch(numField -> !DataValidators.isNumeric(numField.getText()))) {
 			errorMessage.setLength(0); // Clear previous content
-			errorMessage
-					.append("Please enter valid numeric values for those that require it. (e.g. Philhealth, Pag-ibig)");
+			errorMessage.append(
+					"Please enter valid numeric values for those that require it. (e.g. Hourly Rate, Basic Salary)");
+			return false;
+		}
+
+		if (Arrays.stream(stringOnlyFields)
+				.anyMatch(stringField -> !DataValidators.isPureString(stringField.getText()))) {
+			errorMessage.setLength(0);
+			errorMessage.append("Please enter valid characters only.");
+			return false;
+		}
+
+		if (!DataValidators.isValidDate(birthdayField.getText())) {
+			errorMessage.setLength(0);
+			errorMessage.append("Please enter a valid date.");
+			return false;
+		}
+
+		if (!DataValidators.isSSSFormattedCorrectly(sssField.getText())
+				|| !DataValidators.isPhoneNumberFormattedCorrectly(phoneNumberField.getText())
+				|| !DataValidators.isTINFormattedCorrectly(tinField.getText())
+				|| !DataValidators.isProperLength(pagibigField.getText())
+				|| !DataValidators.isProperLength(philhealthField.getText())) {
+			errorMessage.setLength(0);
+			errorMessage.append("Please follow proper formatting.");
 			return false;
 		}
 
@@ -451,7 +631,7 @@ public class AddEmployeeDetailsPage extends JFrame {
 			break;
 		}
 	}
-	
+
 	public static void addLoginCredentialsEntry(JsonArray jsonArray, JTextField employeeNumberField,
 			JTextField firstNameField, JTextField lastNameField) {
 
